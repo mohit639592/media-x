@@ -1,973 +1,336 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
-<meta charset="UTF-8"/>
-<meta name="viewport"
-content="width=device-width, initial-scale=1.0"/>
-
-<title>MEDIA X</title>
-
-<link rel="manifest" href="manifest.json">
-
-<link rel="icon" href="data:,">
-
-<link rel="stylesheet"
-href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-
-<style>
-
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-  font-family:Arial,sans-serif;
-}
-
-body{
-  background:#050505;
-  color:white;
-  overflow-x:hidden;
-}
-
-/* BACKGROUND */
-
-body::before{
-  content:"";
-  position:fixed;
-  width:600px;
-  height:600px;
-  background:cyan;
-  filter:blur(220px);
-  opacity:0.08;
-  top:-250px;
-  left:-250px;
-  z-index:-1;
-}
-
-body::after{
-  content:"";
-  position:fixed;
-  width:500px;
-  height:500px;
-  background:#00ff99;
-  filter:blur(220px);
-  opacity:0.05;
-  bottom:-250px;
-  right:-250px;
-  z-index:-1;
-}
-
-/* NAVBAR */
-
-.navbar{
-
-  width:100%;
-
-  padding:18px 24px;
-
-  display:flex;
-
-  justify-content:space-between;
-
-  align-items:center;
-
-  position:sticky;
-
-  top:0;
-
-  z-index:999;
-
-  background:
-  rgba(0,0,0,0.55);
-
-  backdrop-filter:blur(14px);
-
-  border-bottom:
-  1px solid rgba(255,255,255,0.05);
-
-}
-
-.logo{
-
-  font-size:34px;
-
-  font-weight:bold;
-
-  color:#00ffff;
-
-  text-shadow:
-  0 0 20px cyan;
-
-}
-
-.admin-btn{
-
-  padding:12px 18px;
-
-  border:none;
-
-  border-radius:50px;
-
-  background:#101010;
-
-  color:cyan;
-
-  cursor:pointer;
-
-  font-weight:bold;
-
-  border:
-  1px solid rgba(0,255,255,0.2);
-
-  transition:0.3s;
-
-}
-
-.admin-btn:hover{
-
-  transform:translateY(-2px);
-
-  box-shadow:
-  0 0 18px rgba(0,255,255,0.2);
-
-}
-
-/* HERO */
-
-.hero{
-
-  padding:
-  80px 20px 45px;
-
-  text-align:center;
-
-}
-
-.hero h1{
-
-  font-size:78px;
-
-  color:#00ffff;
-
-  text-shadow:
-  0 0 35px cyan;
-
-  margin-bottom:15px;
-
-}
-
-.hero p{
-
-  color:#aaa;
-
-  font-size:19px;
-
-}
-
-/* SEARCH */
-
-.search-box{
-
-  width:100%;
-
-  max-width:780px;
-
-  margin:40px auto 0;
-
-  position:relative;
-
-}
-
-.search-box input{
-
-  width:100%;
-
-  padding:
-  20px 22px 20px 55px;
-
-  border:none;
-
-  outline:none;
-
-  border-radius:22px;
-
-  background:
-  rgba(15,15,15,0.95);
-
-  color:white;
-
-  font-size:16px;
-
-  border:
-  1px solid rgba(255,255,255,0.05);
-
-  transition:0.3s;
-
-}
-
-.search-box input:focus{
-
-  border-color:cyan;
-
-  box-shadow:
-  0 0 25px rgba(0,255,255,0.15);
-
-}
-
-.search-icon{
-
-  position:absolute;
-
-  left:20px;
-
-  top:50%;
-
-  transform:translateY(-50%);
-
-  color:#777;
-
-  font-size:18px;
-
-}
-
-/* PLAYLISTS */
-
-.playlist-row{
-
-  display:flex;
-
-  gap:12px;
-
-  overflow-x:auto;
-
-  padding:
-  10px 20px 35px;
-
-  scrollbar-width:none;
-
-}
-
-.playlist-row::-webkit-scrollbar{
-  display:none;
-}
-
-.playlist-btn{
-
-  min-width:max-content;
-
-  padding:12px 20px;
-
-  border-radius:50px;
-
-  background:#111;
-
-  color:#ccc;
-
-  cursor:pointer;
-
-  transition:0.3s;
-
-  border:
-  1px solid rgba(255,255,255,0.06);
-
-}
-
-.playlist-btn:hover{
-
-  color:cyan;
-
-  border-color:
-  rgba(0,255,255,0.25);
-
-  box-shadow:
-  0 0 18px rgba(0,255,255,0.12);
-
-}
-
-.active-playlist{
-
-  background:cyan;
-
-  color:black;
-
-  font-weight:bold;
-
-}
-
-/* GRID */
-
-.media-grid{
-
-  display:grid;
-
-  grid-template-columns:
-  repeat(auto-fit,minmax(320px,1fr));
-
-  gap:28px;
-
-  padding:25px;
-
-}
-
-/* CARD */
-
-.card{
-
-  background:
-  linear-gradient(
-    145deg,
-    rgba(20,20,20,0.96),
-    rgba(10,10,10,0.96)
-  );
-
-  border-radius:30px;
-
-  overflow:hidden;
-
-  border:
-  1px solid rgba(255,255,255,0.05);
-
-  transition:0.4s ease;
-
-  position:relative;
-
-  backdrop-filter:blur(10px);
-
-  animation:fadeUp 0.5s ease;
-
-}
-
-.card:hover{
-
-  transform:
-  translateY(-8px)
-  scale(1.02);
-
-  box-shadow:
-  0 0 30px rgba(0,255,255,0.18),
-  0 0 60px rgba(0,255,255,0.08);
-
-}
-
-@keyframes fadeUp{
-
-  from{
-    opacity:0;
-    transform:translateY(20px);
-  }
-
-  to{
-    opacity:1;
-    transform:translateY(0);
-  }
-
-}
-
-/* THUMB */
-
-.thumb{
-
-  width:100%;
-
-  aspect-ratio:16/9;
-
-  object-fit:cover;
-
-  display:block;
-
-  image-rendering:auto;
-
-}
-
-/* CONTENT */
-
-.card-content{
-  padding:20px;
-}
-
-.title{
-
-  font-size:22px;
-
-  color:white;
-
-  margin-bottom:10px;
-
-  display:-webkit-box;
-
-  -webkit-line-clamp:2;
-
-  -webkit-box-orient:vertical;
-
-  overflow:hidden;
-
-  min-height:55px;
-
-}
-
-.artist{
-
-  color:#aaa;
-
-  font-size:14px;
-
-  margin-bottom:10px;
-
-}
-
-.playlist-name{
-
-  color:#00ffff;
-
-  font-size:13px;
-
-  margin-bottom:20px;
-
-}
-
-/* BUTTONS */
-
-.btn-row{
-
-  display:flex;
-
-  gap:12px;
-
-}
-
-.play-btn{
-
-  flex:1;
-
-  padding:14px;
-
-  border:none;
-
-  border-radius:16px;
-
-  font-weight:bold;
-
-  cursor:pointer;
-
-  transition:0.3s;
-
-  font-size:15px;
-
-}
-
-.video-btn{
-
-  background:#00ffff;
-
-  color:black;
-
-}
-
-.audio-btn{
-
-  background:#00ff99;
-
-  color:black;
-
-}
-
-.play-btn:hover{
-
-  transform:scale(1.04);
-
-}
-
-/* LOADING */
-
-.loading{
-
-  text-align:center;
-
-  color:#00ffff;
-
-  font-size:22px;
-
-  padding:70px;
-
-}
-
-/* MOBILE */
-
-@media(max-width:700px){
-
-  .hero h1{
-    font-size:52px;
-  }
-
-  .hero p{
-    font-size:16px;
-  }
-
-  .media-grid{
-
-    grid-template-columns:1fr;
-
-    padding:18px;
-
-  }
-
-  .card{
-    border-radius:25px;
-  }
-
-}
-
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#090a12" />
+  <meta name="description" content="Discover your saved music and videos with Media X." />
+  <title>Media X — Your sound, your world</title>
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" href="icon-192.png" type="image/png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <style>
+    :root{color-scheme:dark;--bg:#080910;--panel:#11121d;--panel2:#171827;--text:#f5f5ff;--muted:#9294ad;--line:rgba(255,255,255,.085);--purple:#9b8cff;--blue:#7b9cff;--mint:#7ef0d0;--radius:24px;--page:1440px}
+    *{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth;scroll-padding-top:90px}body{min-height:100vh;background:radial-gradient(ellipse at 12% 0%,rgba(91,76,190,.19),transparent 34%),radial-gradient(ellipse at 95% 35%,rgba(51,119,154,.11),transparent 31%),var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;overflow-x:hidden}button,input{font:inherit}button{color:inherit}a{color:inherit;text-decoration:none}button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid var(--purple);outline-offset:3px}
+    .topbar{position:sticky;top:0;z-index:20;background:rgba(8,9,16,.82);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);border-bottom:1px solid var(--line);padding:0 max(20px,calc((100vw - var(--page))/2));}.nav-inner{min-height:76px;display:flex;align-items:center;gap:26px}.brand{display:flex;align-items:center;gap:11px;flex-shrink:0;font:700 22px 'Space Grotesk',sans-serif;letter-spacing:-.8px}.brand-mark{width:39px;height:39px;display:grid;place-items:center;border-radius:14px;background:linear-gradient(135deg,#b0a0ff,#6f83ff 58%,#68dfd0);color:#10111b;box-shadow:0 7px 28px #8576ff30}.brand span:last-child{color:#fff}.brand em{font-style:normal;color:#a89bff}.nav-search{position:relative;max-width:550px;flex:1;margin:auto}.nav-search i{position:absolute;left:17px;top:50%;transform:translateY(-50%);color:#898ba4}.nav-search input{width:100%;height:46px;border:1px solid var(--line);border-radius:15px;background:rgba(255,255,255,.045);color:var(--text);padding:0 16px 0 45px;outline:none;transition:.2s}.nav-search input::placeholder{color:#777990}.nav-search input:focus{border-color:#9b8cff85;background:#171726;box-shadow:0 0 0 4px #9b8cff12}.nav-actions{display:flex;align-items:center;gap:10px}.icon-btn,.admin-btn{height:42px;border:1px solid var(--line);background:rgba(255,255,255,.045);border-radius:14px;display:inline-flex;align-items:center;justify-content:center;gap:9px;cursor:pointer;transition:.2s}.icon-btn{width:42px;color:#d8d7ef}.admin-btn{padding:0 15px;font-weight:700;font-size:13px}.icon-btn:hover,.admin-btn:hover{background:#222238;border-color:#9b8cff65;transform:translateY(-1px)}
+    main{width:min(100% - 48px,var(--page));margin:0 auto;padding:30px 0 90px}.welcome{display:flex;align-items:center;justify-content:space-between;gap:22px;margin:8px 0 28px}.eyebrow{display:flex;align-items:center;gap:9px;color:#b5aaff;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:13px}.eyebrow:before{content:'';width:22px;height:2px;background:linear-gradient(90deg,var(--purple),var(--mint));border-radius:9px}.welcome h1{font:700 clamp(34px,4vw,56px)/1.05 'Space Grotesk',sans-serif;letter-spacing:-2px;max-width:760px}.welcome h1 .gradient{background:linear-gradient(100deg,#c3b6ff 5%,#8ba5ff 52%,#8aefd9);-webkit-background-clip:text;background-clip:text;color:transparent}.welcome p{color:var(--muted);font-size:15px;line-height:1.65;margin-top:13px}.welcome-note{display:flex;align-items:center;gap:12px;padding:13px 16px;background:#ffffff06;border:1px solid var(--line);border-radius:17px;color:#c8c8dd;font-size:12px;white-space:nowrap}.live-dot{width:8px;height:8px;background:var(--mint);border-radius:50%;box-shadow:0 0 14px #7ef0d0a8}
+    .hero{position:relative;isolation:isolate;overflow:hidden;min-height:280px;border:1px solid #b2a5ff28;border-radius:30px;background:linear-gradient(110deg,#1a1930 0%,#171b31 45%,#102a32 100%);display:grid;grid-template-columns:1.1fr .9fr;align-items:center;padding:clamp(25px,4vw,52px);box-shadow:0 24px 80px #0003}.hero:before,.hero:after{content:'';position:absolute;border-radius:50%;filter:blur(1px);pointer-events:none;z-index:-1}.hero:before{width:330px;height:330px;right:16%;top:-220px;border:1px solid #a59aff38;box-shadow:0 0 0 32px #a59aff08,0 0 0 72px #a59aff05}.hero:after{width:250px;height:250px;right:-60px;bottom:-160px;background:#70e5d21a;filter:blur(30px)}.hero-copy{position:relative;z-index:1}.hero-tag{display:inline-flex;align-items:center;gap:8px;border:1px solid #b7adff38;background:#ffffff0b;padding:8px 11px;border-radius:99px;font-size:11px;font-weight:700;color:#d4ceff;letter-spacing:.6px}.hero h2{font:700 clamp(30px,3.5vw,47px)/1.08 'Space Grotesk',sans-serif;letter-spacing:-1.7px;max-width:520px;margin:18px 0 11px}.hero p{max-width:430px;color:#b9bbd1;line-height:1.65;font-size:14px}.hero-actions{display:flex;gap:11px;flex-wrap:wrap;margin-top:23px}.primary-btn,.secondary-btn{min-height:46px;padding:0 17px;border-radius:14px;border:1px solid transparent;display:inline-flex;align-items:center;justify-content:center;gap:10px;font-weight:700;font-size:13px;cursor:pointer;transition:.2s}.primary-btn{background:linear-gradient(110deg,#c0b2ff,#8da2ff);color:#10111b;box-shadow:0 8px 25px #9b8cff25}.primary-btn:hover{transform:translateY(-2px);box-shadow:0 12px 28px #9b8cff35}.secondary-btn{background:#ffffff0b;border-color:#ffffff19;color:#f4f2ff}.secondary-btn:hover{background:#ffffff15}.hero-art{height:220px;position:relative;display:flex;align-items:center;justify-content:center}.disc{width:195px;height:195px;border-radius:50%;position:relative;background:repeating-radial-gradient(circle at center,#141521 0 3px,#2b2c43 4px 5px,#11121c 6px 8px);box-shadow:0 20px 50px #0008,0 0 55px #9b8cff25;transform:rotate(-13deg)}.disc:before{content:'';position:absolute;inset:25%;border-radius:50%;background:radial-gradient(circle at 35% 30%,#e0c5ff,#9b8cff 35%,#515dd4 70%,#20223c);border:5px solid #171827}.disc:after{content:'';position:absolute;width:13px;height:13px;background:#171827;border:3px solid #d8d1ff;border-radius:50%;left:calc(50% - 6.5px);top:calc(50% - 6.5px)}.float-pill{position:absolute;display:flex;align-items:center;gap:9px;padding:11px 13px;background:#171827d9;border:1px solid #ffffff20;backdrop-filter:blur(12px);border-radius:16px;font-size:11px;font-weight:700;box-shadow:0 10px 35px #0004}.float-pill i{color:#a99aff}.float-one{left:3%;top:26px}.float-two{right:0;bottom:23px}.float-two i{color:var(--mint)}
+    .section{margin-top:38px}.section-head{display:flex;align-items:end;justify-content:space-between;gap:15px;margin-bottom:17px}.section-title{font:700 22px 'Space Grotesk',sans-serif;letter-spacing:-.55px}.section-subtitle{font-size:12px;color:var(--muted);margin-top:5px}.text-link{border:0;background:none;color:#b9adff;font-size:12px;font-weight:700;cursor:pointer;padding:8px}.text-link:hover{color:#fff}.filter-row{display:flex;gap:9px;overflow-x:auto;padding:2px 1px 9px;scrollbar-width:none}.filter-row::-webkit-scrollbar{display:none}.playlist-btn{flex:0 0 auto;border:1px solid var(--line);border-radius:99px;background:#ffffff05;color:#b5b5cc;padding:10px 16px;font-size:12px;font-weight:700;cursor:pointer;transition:.2s;white-space:nowrap}.playlist-btn:hover{color:#fff;border-color:#a99aff66}.playlist-btn.active-playlist{background:#b5a7ff;color:#141321;border-color:transparent;box-shadow:0 5px 18px #9b8cff20}
+    .media-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:17px}.card{min-width:0;overflow:hidden;position:relative;border:1px solid var(--line);border-radius:21px;background:linear-gradient(155deg,#171824,#10111a 72%);transition:transform .25s,border-color .25s,box-shadow .25s;animation:rise .45s both}.card:hover{transform:translateY(-5px);border-color:#a89aff4d;box-shadow:0 18px 35px #0004}.thumb-wrap{position:relative;aspect-ratio:16/10;background:#1b1b2a;overflow:hidden}.thumb{width:100%;height:100%;display:block;object-fit:cover;transition:transform .45s;}.card:hover .thumb{transform:scale(1.045)}.thumb-wrap:after{content:'';position:absolute;inset:45% 0 0;background:linear-gradient(transparent,#08091070);pointer-events:none}.type-pill{position:absolute;z-index:1;top:11px;left:11px;border:1px solid #ffffff25;background:#0b0b15b8;backdrop-filter:blur(10px);padding:6px 9px;border-radius:99px;font-size:10px;color:#f0edff;font-weight:700;text-transform:capitalize}.quick-play{position:absolute;z-index:2;right:12px;bottom:12px;width:42px;height:42px;display:grid;place-items:center;border:0;border-radius:50%;background:#c4b8ff;color:#141321;cursor:pointer;box-shadow:0 5px 22px #0005;transition:.2s}.quick-play:hover{transform:scale(1.08);background:#e0d9ff}.card-content{padding:15px}.title{font:700 15px/1.4 'Space Grotesk',sans-serif;letter-spacing:-.2px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:42px}.artist{color:var(--muted);font-size:12px;margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.card-meta{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:14px 0 12px;color:#a9a6c7;font-size:10px}.playlist-name{max-width:70%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;background:#a99aff12;border:1px solid #a99aff20;padding:5px 8px;border-radius:99px;color:#c6bcff}.card-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}.play-btn{min-width:0;padding:10px 7px;border:1px solid var(--line);border-radius:11px;background:#ffffff06;font-size:11px;font-weight:700;cursor:pointer;transition:.2s;white-space:nowrap}.play-btn i{margin-right:5px}.video-btn:hover{background:#a99aff1c;border-color:#a99aff5c}.audio-btn{background:#9b8cff;color:#151421;border-color:transparent}.audio-btn:hover{background:#c0b5ff}.edit-btn{grid-column:1/-1;background:#ffffff08;color:#c9c0ff;border-color:#9b8cff35}.edit-btn:hover{background:#9b8cff20;border-color:#a99aff80}.modal-backdrop{position:fixed;inset:0;z-index:100;background:#05060bd9;backdrop-filter:blur(12px);display:none;align-items:center;justify-content:center;padding:18px}.modal-backdrop.open{display:flex}.edit-modal{width:min(100%,720px);max-height:min(92vh,900px);overflow:auto;background:linear-gradient(150deg,#191a2a,#0e0f18);border:1px solid #ffffff1c;border-radius:24px;box-shadow:0 30px 100px #0009;padding:clamp(18px,3vw,30px)}.modal-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:22px}.modal-head h2{font:700 25px 'Space Grotesk',sans-serif;letter-spacing:-.6px}.modal-head p{font-size:12px;color:var(--muted);margin-top:6px}.modal-close{width:38px;height:38px;flex:0 0 auto;border:1px solid var(--line);background:#ffffff08;border-radius:12px;cursor:pointer}.edit-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px}.field{display:flex;flex-direction:column;gap:7px;min-width:0}.field.full{grid-column:1/-1}.field label{font-size:11px;font-weight:700;color:#c7c4df}.field input,.field select{width:100%;min-width:0;height:44px;border:1px solid #ffffff18;border-radius:12px;background:#0c0d16;color:var(--text);padding:0 12px;outline:none}.field input:focus,.field select:focus{border-color:#a99aff9c;box-shadow:0 0 0 3px #9b8cff15}.field-help{font-size:10px;color:#8587a0;line-height:1.5}.modal-actions{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-top:24px;padding-top:18px;border-top:1px solid var(--line)}.modal-actions-right{display:flex;gap:9px}.delete-btn,.cancel-btn,.save-btn{min-height:42px;padding:0 15px;border-radius:12px;border:1px solid var(--line);font-size:12px;font-weight:700;cursor:pointer}.delete-btn{background:#ff536a14;color:#ff8b9a;border-color:#ff536a38}.delete-btn:hover{background:#ff536a28}.cancel-btn{background:#ffffff08}.save-btn{background:linear-gradient(110deg,#c0b5ff,#8da2ff);color:#121321;border-color:transparent}.save-btn:disabled,.delete-btn:disabled{opacity:.55;cursor:wait}.modal-status{min-height:17px;margin-top:12px;color:#ff9aa6;font-size:12px}.modal-status.success{color:#8ef0d3}.playlist-new-wrap{display:none}.playlist-new-wrap.visible{display:flex}.loading{grid-column:1/-1;text-align:center;padding:55px 20px;color:var(--muted);border:1px dashed #ffffff20;border-radius:20px}.loading i{display:block;font-size:25px;color:#b8aaff;margin-bottom:13px}.loading strong{display:block;color:#f3f0ff;font:600 16px 'Space Grotesk',sans-serif;margin-bottom:6px}.loading p{font-size:12px}.footer{border-top:1px solid var(--line);padding:22px 0 0;margin-top:42px;display:flex;align-items:center;justify-content:space-between;gap:15px;color:#73758d;font-size:11px}.footer-brand{font:700 13px 'Space Grotesk',sans-serif;color:#c7c2e8}.footer-brand span{color:#9e91ff}
+    @keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
+    @media(min-width:1500px){main{padding-top:38px}.media-grid{gap:20px}}
+    @media(max-width:1100px){.media-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.hero{grid-template-columns:1fr .65fr}.hero-art{transform:scale(.88)}.welcome h1{font-size:44px}}
+    @media(max-width:760px){.topbar{padding:0 16px}.nav-inner{min-height:66px;gap:12px}.brand{font-size:19px;gap:8px}.brand-mark{width:35px;height:35px;border-radius:12px}.nav-search{max-width:none}.nav-search input{height:41px;font-size:12px;padding-left:37px;border-radius:13px}.nav-search i{left:13px;font-size:12px}.admin-btn{width:41px;padding:0;font-size:0;gap:0}.admin-btn i{font-size:14px}.nav-actions{gap:7px}.icon-btn{height:39px;width:39px}main{width:calc(100% - 32px);padding:23px 0 100px}.welcome{align-items:flex-start;margin:5px 0 22px}.welcome h1{font-size:clamp(31px,7vw,43px);letter-spacing:-1.5px}.welcome p{font-size:13px;max-width:440px}.welcome-note{display:none}.hero{min-height:0;grid-template-columns:1fr;padding:25px 23px 20px;border-radius:24px}.hero h2{font-size:33px;max-width:420px}.hero p{font-size:13px}.hero-art{position:absolute;right:-38px;bottom:-47px;opacity:.22;transform:scale(.75);pointer-events:none}.hero-copy{max-width:540px}.hero-actions{margin-top:19px}.primary-btn,.secondary-btn{min-height:43px;padding:0 14px}.section{margin-top:29px}.section-title{font-size:20px}.section-subtitle{font-size:11px}.media-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.card{border-radius:17px}.thumb-wrap{aspect-ratio:1.22}.card-content{padding:12px}.title{font-size:13px;min-height:37px}.artist{font-size:11px}.card-meta{margin:11px 0 10px}.play-btn{font-size:10px;padding:10px 4px}.play-btn i{margin-right:3px}.quick-play{width:36px;height:36px;right:9px;bottom:9px}.type-pill{top:8px;left:8px;font-size:9px}.footer{margin-top:30px}}
+    @media(max-width:520px){.edit-form-grid{grid-template-columns:1fr}.field.full{grid-column:auto}.modal-backdrop{padding:9px}.edit-modal{border-radius:18px;padding:17px}.modal-head h2{font-size:21px}.modal-actions{align-items:stretch;flex-direction:column}.modal-actions-right{justify-content:flex-end}.delete-btn{align-self:flex-start}}@media(max-width:420px){.topbar{padding:0 12px}.nav-inner{gap:9px}.brand{font-size:16px;letter-spacing:-.5px}.brand-mark{width:32px;height:32px}.nav-search input{width:100%;min-width:0}.nav-actions .icon-btn{display:none}main{width:calc(100% - 24px)}.welcome h1{font-size:32px}.hero{padding:22px 18px 19px}.hero h2{font-size:29px}.hero-actions{gap:8px}.primary-btn,.secondary-btn{font-size:11px;padding:0 11px}.media-grid{gap:9px}.card-content{padding:10px}.title{font-size:12px}.artist{font-size:10px}.card-actions{gap:5px}.play-btn{font-size:9px;padding:9px 3px}.playlist-btn{padding:9px 13px}.section-head{align-items:center}.footer{align-items:flex-start;flex-direction:column;gap:8px}}
+  </style>
 </head>
 <body>
+  <header class="topbar">
+    <div class="nav-inner">
+      <a class="brand" href="index.html" aria-label="Media X home"><span class="brand-mark"><i class="fa-solid fa-wave-square"></i></span><span>MEDIA <em>X</em></span></a>
+      <label class="nav-search" aria-label="Search media"><i class="fa-solid fa-magnifying-glass"></i><input id="searchInput" type="search" placeholder="Search songs, artists, playlists..." autocomplete="off" /></label>
+      <div class="nav-actions"><button class="icon-btn" type="button" aria-label="Back to top" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="fa-solid fa-arrow-up"></i></button><button class="admin-btn" type="button" onclick="window.location.href='admin.html'"><i class="fa-solid fa-sliders"></i><span>Admin</span></button></div>
+    </div>
+  </header>
 
-<!-- NAVBAR -->
+  <main>
+    <section class="welcome">
+      <div><div class="eyebrow">YOUR PERSONAL MEDIA SPACE</div><h1>Your sound.<br/><span class="gradient">Your world.</span></h1><p>Pick up where the mood takes you. Your music and videos, all in one place.</p></div>
+      <div class="welcome-note"><span class="live-dot"></span><span>Your library, ready when you are</span></div>
+    </section>
 
-<div class="navbar">
+    <section class="hero" aria-label="Featured media">
+      <div class="hero-copy"><span class="hero-tag"><i class="fa-solid fa-sparkles"></i> YOUR NEXT FAVORITE STARTS HERE</span><h2>A little escape, <br/>one <span class="gradient">play at a time.</span></h2><p>Explore your saved collection, find a familiar favorite, or discover something to match the moment.</p><div class="hero-actions"><button class="primary-btn" type="button" onclick="focusLibrary()"><i class="fa-solid fa-compass"></i> Explore library</button><button class="secondary-btn" type="button" onclick="setCategory('video',this)"><i class="fa-regular fa-circle-play"></i> Browse videos</button></div></div>
+      <div class="hero-art" aria-hidden="true"><div class="disc"></div><div class="float-pill float-one"><i class="fa-solid fa-headphones"></i><span>Made for your mood</span></div><div class="float-pill float-two"><i class="fa-solid fa-wave-square"></i><span>Press play & unwind</span></div></div>
+    </section>
 
-  <div class="logo">
-    MEDIA X
+    <section class="section" id="library">
+      <div class="section-head"><div><h2 class="section-title">Explore your library</h2><p class="section-subtitle" id="librarySubtitle">Your saved collection, in one place</p></div><button class="text-link" type="button" onclick="resetFilters()">Reset filters <i class="fa-solid fa-arrow-rotate-left"></i></button></div>
+      <div class="filter-row" id="playlistRow" aria-label="Filter by playlist"><button class="playlist-btn active-playlist" type="button" onclick="showAll(this)">All media</button></div>
+      <div class="media-grid" id="mediaGrid"><div class="loading"><i class="fa-solid fa-circle-notch fa-spin"></i><strong>Getting your library ready</strong><p>Loading your saved music and videos…</p></div></div>
+    </section>
+    <footer class="footer"><div class="footer-brand">MEDIA <span>X</span></div><div>Made for the moments you want to replay.</div><div>Music • Videos • Your library</div></footer>
+  </main>
+
+  <div class="modal-backdrop" id="editBackdrop" role="dialog" aria-modal="true" aria-labelledby="editModalTitle">
+    <section class="edit-modal">
+      <div class="modal-head"><div><h2 id="editModalTitle">Edit media details</h2><p>Update this song or video. Changes are saved to your Media X library.</p></div><button class="modal-close" type="button" onclick="closeEditModal()" aria-label="Close editor"><i class="fa-solid fa-xmark"></i></button></div>
+      <form id="editMediaForm">
+        <div class="edit-form-grid">
+          <div class="field"><label for="editTitle">Song / video name</label><input id="editTitle" name="title" required maxlength="180" /></div>
+          <div class="field"><label for="editArtist">Artist / creator</label><input id="editArtist" name="artist" maxlength="180" /></div>
+          <div class="field"><label for="editCategory">Media type</label><select id="editCategory" name="category"><option value="music">Music / Audio</option><option value="video">Video</option><option value="media">Other media</option></select></div>
+          <div class="field"><label for="editPlaylist">Choose playlist</label><select id="editPlaylist" name="playlist" required></select></div>
+          <div class="field playlist-new-wrap full" id="newPlaylistWrap"><label for="editNewPlaylist">New playlist name</label><input id="editNewPlaylist" maxlength="100" placeholder="e.g. Late Night Vibes" /></div>
+          <div class="field full"><label for="editYoutubeId">YouTube video ID</label><input id="editYoutubeId" name="youtubeId" required placeholder="e.g. dQw4w9WgXcQ" /><span class="field-help">Keep this unchanged if you only want to edit the name, artist, or playlist. Changing it changes what opens when you press play.</span></div>
+          <div class="field full"><label for="editThumbnail">Thumbnail image URL</label><input id="editThumbnail" name="thumbnail" type="url" placeholder="https://…" /></div>
+        </div>
+        <div class="modal-status" id="editStatus" role="status" aria-live="polite"></div>
+        <div class="modal-actions"><button class="delete-btn" id="deleteMediaBtn" type="button" onclick="deleteCurrentMedia()"><i class="fa-regular fa-trash-can"></i> Delete media</button><div class="modal-actions-right"><button class="cancel-btn" type="button" onclick="closeEditModal()">Cancel</button><button class="save-btn" id="saveMediaBtn" type="submit"><i class="fa-solid fa-check"></i> Save changes</button></div></div>
+      </form>
+    </section>
   </div>
 
-  <button class="admin-btn"
-  onclick="window.location.href='admin.html'">
-
-    Admin
-
-  </button>
-
-</div>
-
-<!-- HERO -->
-
-<div class="hero">
-
-  <h1>MEDIA X</h1>
-
-  <p>
-    Futuristic Personal Streaming Platform
-  </p>
-
-  <!-- SEARCH -->
-
-  <div class="search-box">
-
-    <i class="fa-solid fa-magnifying-glass search-icon"></i>
-
-    <input
-      type="text"
-      id="searchInput"
-      placeholder="Search songs, artists, playlists..."
-    >
-
-  </div>
-
-</div>
-
-<!-- PLAYLISTS -->
-
-<div class="playlist-row"
-id="playlistRow"></div>
-
-<!-- MEDIA GRID -->
-
-<div class="media-grid"
-id="mediaGrid">
-
-  <div class="loading">
-    Loading Media...
-  </div>
-
-</div>
-
-<!-- FIREBASE -->
-
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-
-<script>
-
-const firebaseConfig = {
-
-  apiKey: "YOUR_API_KEY",
-
-  authDomain:
-  "media-x-104d2.firebaseapp.com",
-
-  projectId:
-  "media-x-104d2",
-
-  storageBucket:
-  "media-x-104d2.firebasestorage.app",
-
-  messagingSenderId:
-  "763389190073",
-
-  appId:
-  "1:763389190073:web:94d1de3ac9c2652e6fe068"
-
-};
-
-firebase.initializeApp(firebaseConfig);
-
-const db = firebase.firestore();
-
-let allMedia = [];
-
-let currentPlaylist = [];
-
-/* LOAD MEDIA */
-
-async function loadMedia(){
-
-  try{
-
-    const mediaGrid =
-    document.getElementById("mediaGrid");
-
-    const snapshot =
-    await db.collection("media").get();
-
-    allMedia = [];
-
-    snapshot.forEach((doc)=>{
-
-      const data = doc.data();
-
-      if(!data.youtubeId) return;
-
-      const mediaItem = {
-
-        title:
-        data.title || "Unknown Title",
-
-        artist:
-        data.artist || "Unknown Artist",
-
-        playlist:
-        data.playlist || "General",
-
-        category:
-        data.category || "media",
-
-        youtubeId:
-        data.youtubeId,
-
-        thumbnail:
-        data.thumbnail ||
-        `https://img.youtube.com/vi/${data.youtubeId}/maxresdefault.jpg`,
-
-        titleLower:
-        (data.title || "").toLowerCase(),
-
-        artistLower:
-        (data.artist || "").toLowerCase(),
-
-        playlistLower:
-        (data.playlist || "").toLowerCase(),
-
-        categoryLower:
-        (data.category || "").toLowerCase()
-
-      };
-
-      allMedia.push(mediaItem);
-
-    });
-
-    currentPlaylist = [...allMedia];
-
-    renderMedia(allMedia);
-
-    renderPlaylists();
-
-    if(allMedia.length === 0){
-
-      mediaGrid.innerHTML = `
-      <div class="loading">
-      No media found
-      </div>
-      `;
-
+  <!-- Existing Firebase/Firestore data source and audio/video routes are intentionally preserved. -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "media-x-104d2.firebaseapp.com",
+      projectId: "media-x-104d2",
+      storageBucket: "media-x-104d2.firebasestorage.app",
+      messagingSenderId: "763389190073",
+      appId: "1:763389190073:web:94d1de3ac9c2652e6fe068"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    let allMedia = [];
+    let currentPlaylist = [];
+    let activePlaylistName = null;
+    let activeCategory = 'all';
+    let editingMedia = null;
+
+    async function loadMedia(){
+      const mediaGrid = document.getElementById('mediaGrid');
+      try {
+        const snapshot = await db.collection('media').get();
+        allMedia = [];
+        snapshot.forEach((doc) => {
+          const data = doc.data();
+          if (!data.youtubeId) return;
+          allMedia.push({
+            docId: doc.id,
+            title: data.title || 'Unknown Title',
+            artist: data.artist || 'Unknown Artist',
+            playlist: data.playlist || 'General',
+            category: data.category || 'media',
+            youtubeId: data.youtubeId,
+            thumbnail: data.thumbnail || `https://img.youtube.com/vi/${data.youtubeId}/maxresdefault.jpg`,
+            titleLower: (data.title || '').toLowerCase(),
+            artistLower: (data.artist || '').toLowerCase(),
+            playlistLower: (data.playlist || 'General').toLowerCase(),
+            categoryLower: (data.category || 'media').toLowerCase()
+          });
+        });
+        currentPlaylist = [...allMedia];
+        renderPlaylists();
+        renderMedia(allMedia);
+        updateSubtitle(allMedia.length);
+      } catch(error) {
+        console.error('Media X could not load the Firestore media collection:', error);
+        mediaGrid.innerHTML = `<div class="loading"><i class="fa-solid fa-cloud-arrow-down"></i><strong>We couldn't load your library</strong><p>Check your connection and Firebase configuration, then refresh the page.</p></div>`;
+      }
     }
 
-  }
-
-  catch(error){
-
-    console.error(error);
-
-    document.getElementById("mediaGrid")
-    .innerHTML = `
-    <div class="loading">
-    Failed to load media
-    </div>
-    `;
-
-  }
-
-}
-
-/* PLAYLISTS */
-
-function renderPlaylists(){
-
-  const playlistRow =
-  document.getElementById("playlistRow");
-
-  playlistRow.innerHTML = "";
-
-  const playlists =
-  [...new Set(
-    allMedia.map(item => item.playlist)
-  )];
-
-  playlistRow.innerHTML += `
-
-    <div
-    class="playlist-btn active-playlist"
-    onclick="showAll(this)">
-
-    All
-
-    </div>
-
-  `;
-
-  playlists.forEach((playlist)=>{
-
-    playlistRow.innerHTML += `
-
-      <div
-      class="playlist-btn"
-      onclick="filterPlaylist('${playlist}',this)">
-
-      ${playlist}
-
-      </div>
-
-    `;
-
-  });
-
-}
-
-/* MEDIA RENDER */
-
-function renderMedia(data){
-
-  const mediaGrid =
-  document.getElementById("mediaGrid");
-
-  mediaGrid.innerHTML = "";
-
-  if(data.length === 0){
-
-    mediaGrid.innerHTML = `
-    <div class="loading">
-    No matching media found
-    </div>
-    `;
-
-    return;
-
-  }
-
-  data.forEach((item)=>{
-
-    mediaGrid.innerHTML += `
-
-    <div class="card">
-
-      <img
-      class="thumb"
-
-      src="${item.thumbnail}"
-
-      loading="lazy"
-
-      onerror="
-      this.onerror=null;
-      this.src='https://img.youtube.com/vi/${item.youtubeId}/hqdefault.jpg';
-      "
-      >
-
-      <div class="card-content">
-
-        <div class="title">
-        ${item.title}
-        </div>
-
-        <div class="artist">
-        ${item.artist}
-        </div>
-
-        <div class="playlist-name">
-        ${item.playlist}
-        </div>
-
-        <div class="btn-row">
-
-          <button
-          class="play-btn video-btn"
-          onclick="openVideo('${item.youtubeId}')">
-
-          Play Video
-
-          </button>
-
-          <button
-          class="play-btn audio-btn"
-          onclick="openMusic('${item.youtubeId}')">
-
-          Play Audio
-
-          </button>
-
-        </div>
-
-      </div>
-
-    </div>
-
-    `;
-
-  });
-
-}
-
-/* FILTER */
-
-window.filterPlaylist =
-function(name,element){
-
-  document
-  .querySelectorAll(".playlist-btn")
-
-  .forEach(btn=>{
-
-    btn.classList.remove(
-      "active-playlist"
-    );
-
-  });
-
-  element.classList.add(
-    "active-playlist"
-  );
-
-  const filtered =
-  allMedia.filter(item =>
-
-    item.playlistLower ===
-    name.toLowerCase()
-
-  );
-
-  currentPlaylist = [...filtered];
-
-  renderMedia(filtered);
-
-}
-
-/* SHOW ALL */
-
-window.showAll = function(element){
-
-  document
-  .querySelectorAll(".playlist-btn")
-
-  .forEach(btn=>{
-
-    btn.classList.remove(
-      "active-playlist"
-    );
-
-  });
-
-  element.classList.add(
-    "active-playlist"
-  );
-
-  currentPlaylist = [...allMedia];
-
-  renderMedia(allMedia);
-
-}
-
-/* SEARCH */
-
-document
-.getElementById("searchInput")
-
-.addEventListener("input",(e)=>{
-
-  const value =
-  e.target.value.toLowerCase();
-
-  const filtered =
-  allMedia.filter(item =>
-
-    item.titleLower.includes(value) ||
-
-    item.artistLower.includes(value) ||
-
-    item.playlistLower.includes(value) ||
-
-    item.categoryLower.includes(value)
-
-  );
-
-  currentPlaylist = [...filtered];
-
-  renderMedia(filtered);
-
-});
-
-/* OPEN VIDEO */
-
-window.openVideo = function(id){
-
-  window.location.href =
-  `video.html?id=${id}`;
-
-}
-
-/* OPEN MUSIC */
-
-window.openMusic = function(id){
-
-  window.location.href =
-  `music.html?id=${id}`;
-
-}
-
-/* START */
-
-loadMedia();
-
-</script>
-
-<script>
-
-if("serviceWorker" in navigator){
-
-  navigator.serviceWorker
-  .register("service-worker.js")
-
-  .then(()=>{
-
-    console.log(
-      "Service Worker Registered"
-    );
-
-  });
-
-}
-
-</script>
-
+    function renderPlaylists(){
+      const row = document.getElementById('playlistRow');
+      const names = [...new Set(allMedia.map(item => item.playlist))];
+      row.innerHTML = '';
+      const allButton = document.createElement('button');
+      allButton.type = 'button';
+      allButton.className = `playlist-btn ${activePlaylistName === null ? 'active-playlist' : ''}`;
+      allButton.textContent = 'All media';
+      allButton.onclick = () => showAll(allButton);
+      row.appendChild(allButton);
+      names.forEach((name) => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = `playlist-btn ${activePlaylistName === name ? 'active-playlist' : ''}`;
+        button.textContent = name;
+        button.onclick = () => filterPlaylist(name, button);
+        row.appendChild(button);
+      });
+    }
+
+    function renderMedia(items){
+      const grid = document.getElementById('mediaGrid');
+      grid.innerHTML = '';
+      if (!items.length) {
+        grid.innerHTML = `<div class="loading"><i class="fa-regular fa-folder-open"></i><strong>No matches just yet</strong><p>Try another search or reset your filters.</p></div>`;
+        updateSubtitle(0);
+        return;
+      }
+      const fragment = document.createDocumentFragment();
+      items.forEach((item, index) => {
+        const card = document.createElement('article');
+        card.className = 'card';
+        card.style.animationDelay = `${Math.min(index * 35, 280)}ms`;
+        const thumbWrap = document.createElement('div');
+        thumbWrap.className = 'thumb-wrap';
+        const img = document.createElement('img');
+        img.className = 'thumb'; img.src = item.thumbnail; img.alt = `${item.title} thumbnail`; img.loading = 'lazy'; img.decoding = 'async';
+        img.onerror = function(){ this.onerror = null; this.src = `https://img.youtube.com/vi/${encodeURIComponent(item.youtubeId)}/hqdefault.jpg`; };
+        const type = document.createElement('span'); type.className = 'type-pill'; type.textContent = item.category || 'media';
+        const quick = document.createElement('button'); quick.type = 'button'; quick.className = 'quick-play'; quick.setAttribute('aria-label', `Play video: ${item.title}`); quick.innerHTML = '<i class="fa-solid fa-play"></i>'; quick.addEventListener('click', () => openVideo(item.youtubeId));
+        thumbWrap.append(img, type, quick);
+        const content = document.createElement('div'); content.className = 'card-content';
+        const title = document.createElement('div'); title.className = 'title'; title.textContent = item.title;
+        const artist = document.createElement('div'); artist.className = 'artist'; artist.textContent = item.artist;
+        const meta = document.createElement('div'); meta.className = 'card-meta';
+        const playlist = document.createElement('span'); playlist.className = 'playlist-name'; playlist.textContent = item.playlist;
+        const category = document.createElement('span'); category.textContent = item.category.toLowerCase() === 'video' ? 'VIDEO' : 'AUDIO';
+        meta.append(playlist, category);
+        const actions = document.createElement('div'); actions.className = 'card-actions';
+        const video = document.createElement('button'); video.type = 'button'; video.className = 'play-btn video-btn'; video.innerHTML = '<i class="fa-regular fa-circle-play"></i> Video'; video.addEventListener('click', () => openVideo(item.youtubeId));
+        const audio = document.createElement('button'); audio.type = 'button'; audio.className = 'play-btn audio-btn'; audio.innerHTML = '<i class="fa-solid fa-headphones"></i> Audio'; audio.addEventListener('click', () => openMusic(item.youtubeId));
+        const edit = document.createElement('button'); edit.type = 'button'; edit.className = 'play-btn edit-btn'; edit.innerHTML = '<i class="fa-solid fa-pen-to-square"></i> Edit details'; edit.addEventListener('click', () => openEditModal(item.docId));
+        actions.append(video, audio, edit); content.append(title, artist, meta, actions); card.append(thumbWrap, content); fragment.appendChild(card);
+      });
+      grid.appendChild(fragment);
+      updateSubtitle(items.length);
+    }
+
+    function updateSubtitle(count){
+      document.getElementById('librarySubtitle').textContent = `${count} ${count === 1 ? 'item' : 'items'} · Your saved collection, in one place`;
+    }
+    function applyFilters(){
+      const value = document.getElementById('searchInput').value.trim().toLowerCase();
+      currentPlaylist = allMedia.filter(item => {
+        const matchesSearch = item.titleLower.includes(value) || item.artistLower.includes(value) || item.playlistLower.includes(value) || item.categoryLower.includes(value);
+        const matchesPlaylist = activePlaylistName === null || item.playlist === activePlaylistName;
+        const matchesCategory = activeCategory === 'all' || item.categoryLower.includes(activeCategory);
+        return matchesSearch && matchesPlaylist && matchesCategory;
+      });
+      renderMedia(currentPlaylist);
+    }
+    window.filterPlaylist = function(name, button){
+      activePlaylistName = name;
+      document.querySelectorAll('.playlist-btn').forEach(btn => btn.classList.toggle('active-playlist', btn === button));
+      applyFilters();
+    };
+    window.showAll = function(button){
+      activePlaylistName = null;
+      activeCategory = 'all';
+      document.querySelectorAll('.playlist-btn').forEach(btn => btn.classList.toggle('active-playlist', btn === button));
+      applyFilters();
+    };
+    window.setCategory = function(category){
+      activeCategory = activeCategory === category ? 'all' : category;
+      document.getElementById('searchInput').value = '';
+      activePlaylistName = null;
+      renderPlaylists();
+      applyFilters();
+      document.getElementById('library').scrollIntoView({behavior:'smooth',block:'start'});
+    };
+    window.resetFilters = function(){
+      document.getElementById('searchInput').value = '';
+      activePlaylistName = null; activeCategory = 'all';
+      renderPlaylists(); applyFilters();
+    };
+    window.focusLibrary = function(){ document.getElementById('library').scrollIntoView({behavior:'smooth',block:'start'}); };
+    document.getElementById('searchInput').addEventListener('input', applyFilters);
+
+    function openEditModal(docId){
+      const item = allMedia.find(media => media.docId === docId);
+      if (!item) return;
+      editingMedia = item;
+      const playlistSelect = document.getElementById('editPlaylist');
+      const playlists = [...new Set(allMedia.map(media => media.playlist).filter(Boolean))].sort((a,b) => a.localeCompare(b));
+      playlistSelect.innerHTML = '';
+      playlists.forEach(name => {
+        const option = document.createElement('option'); option.value = name; option.textContent = name; playlistSelect.appendChild(option);
+      });
+      const createOption = document.createElement('option'); createOption.value = '__create_new__'; createOption.textContent = '+ Create a new playlist…'; playlistSelect.appendChild(createOption);
+      playlistSelect.value = playlists.includes(item.playlist) ? item.playlist : '__create_new__';
+      document.getElementById('editTitle').value = item.title || '';
+      document.getElementById('editArtist').value = item.artist || '';
+      document.getElementById('editCategory').value = ['music','audio','song'].includes((item.category || '').toLowerCase()) ? 'music' : ((item.category || '').toLowerCase() === 'video' ? 'video' : 'media');
+      document.getElementById('editYoutubeId').value = item.youtubeId || '';
+      document.getElementById('editThumbnail').value = item.thumbnail || '';
+      document.getElementById('editNewPlaylist').value = '';
+      toggleNewPlaylistField();
+      const status = document.getElementById('editStatus'); status.textContent = ''; status.classList.remove('success');
+      document.getElementById('editBackdrop').classList.add('open');
+      document.body.style.overflow = 'hidden';
+      setTimeout(() => document.getElementById('editTitle').focus(), 0);
+    }
+    window.openEditModal = openEditModal;
+    window.closeEditModal = function(){
+      document.getElementById('editBackdrop').classList.remove('open');
+      document.body.style.overflow = '';
+      editingMedia = null;
+    };
+    function toggleNewPlaylistField(){
+      const isNew = document.getElementById('editPlaylist').value === '__create_new__';
+      const wrap = document.getElementById('newPlaylistWrap');
+      wrap.classList.toggle('visible', isNew);
+      document.getElementById('editNewPlaylist').required = isNew;
+      if (isNew) document.getElementById('editNewPlaylist').focus();
+    }
+    document.getElementById('editPlaylist').addEventListener('change', toggleNewPlaylistField);
+    document.getElementById('editBackdrop').addEventListener('click', event => {
+      if (event.target.id === 'editBackdrop') closeEditModal();
+    });
+    document.addEventListener('keydown', event => {
+      if (event.key === 'Escape' && document.getElementById('editBackdrop').classList.contains('open')) closeEditModal();
+    });
+    document.getElementById('editMediaForm').addEventListener('submit', async event => {
+      event.preventDefault();
+      if (!editingMedia) return;
+      const saveButton = document.getElementById('saveMediaBtn');
+      const status = document.getElementById('editStatus');
+      const youtubeId = document.getElementById('editYoutubeId').value.trim();
+      let playlist = document.getElementById('editPlaylist').value;
+      if (playlist === '__create_new__') playlist = document.getElementById('editNewPlaylist').value.trim();
+      if (!playlist) { status.textContent = 'Please choose or enter a playlist name.'; return; }
+      if (!youtubeId || /[\s/?#]/.test(youtubeId)) { status.textContent = 'Enter a valid YouTube video ID (not a full URL).'; return; }
+      const updated = {
+        title: document.getElementById('editTitle').value.trim(),
+        artist: document.getElementById('editArtist').value.trim() || 'Unknown Artist',
+        playlist,
+        category: document.getElementById('editCategory').value,
+        youtubeId,
+        thumbnail: document.getElementById('editThumbnail').value.trim() || `https://img.youtube.com/vi/${youtubeId}/maxresdefault.jpg`
+      };
+      if (!updated.title) { status.textContent = 'Song / video name is required.'; return; }
+      saveButton.disabled = true; status.classList.remove('success'); status.textContent = 'Saving changes…';
+      try {
+        await db.collection('media').doc(editingMedia.docId).update(updated);
+        status.classList.add('success'); status.textContent = 'Saved! Updating your library…';
+        const oldPlaylist = activePlaylistName;
+        await loadMedia();
+        activePlaylistName = oldPlaylist && allMedia.some(item => item.playlist === oldPlaylist) ? oldPlaylist : null;
+        renderPlaylists(); applyFilters();
+        setTimeout(closeEditModal, 450);
+      } catch(error) {
+        console.error('Could not update media document:', error);
+        status.classList.remove('success');
+        status.textContent = error.code === 'permission-denied' ? 'Permission denied by Firestore rules. Sign in as an authorized editor or update your database rules.' : 'Could not save changes. Check your connection and Firebase permissions, then try again.';
+      } finally { saveButton.disabled = false; }
+    });
+    window.deleteCurrentMedia = async function(){
+      if (!editingMedia) return;
+      const title = editingMedia.title || 'this media';
+      if (!window.confirm(`Delete “${title}” from your Media X library? This cannot be undone.`)) return;
+      const button = document.getElementById('deleteMediaBtn');
+      const status = document.getElementById('editStatus');
+      button.disabled = true; status.classList.remove('success'); status.textContent = 'Deleting…';
+      try {
+        await db.collection('media').doc(editingMedia.docId).delete();
+        await loadMedia();
+        renderPlaylists(); applyFilters();
+        closeEditModal();
+      } catch(error) {
+        console.error('Could not delete media document:', error);
+        status.textContent = error.code === 'permission-denied' ? 'Permission denied by Firestore rules. You need authorized delete access.' : 'Could not delete this item. Check your connection and Firebase permissions.';
+      } finally { button.disabled = false; }
+    };
+
+    // Keep the original navigation contract: playback remains inside the existing pages.
+    window.openVideo = function(id){ window.location.href = `video.html?id=${encodeURIComponent(id)}`; };
+    window.openMusic = function(id){ window.location.href = `music.html?id=${encodeURIComponent(id)}`; };
+
+    loadMedia();
+  </script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => navigator.serviceWorker.register('service-worker.js').catch(error => console.warn('Service worker registration failed:', error)));
+    }
+  </script>
 </body>
 </html>
