@@ -1,0 +1,1646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MEDIA X | DJ SOUND STUDIO PRO</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; }
+  body {
+    background-color: #040608;
+    color: #e2e8f0;
+    font-family: 'Rajdhani', sans-serif;
+    user-select: none;
+  }
+  .font-orbitron { font-family: 'Orbitron', sans-serif; }
+  
+  /* Cyberpunk Glass Panels */
+  .panel {
+    background: linear-gradient(135deg, rgba(13, 22, 26, 0.9) 0%, rgba(6, 11, 14, 0.95) 100%);
+    border: 1px solid rgba(0, 255, 255, 0.15);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5), inset 0 0 12px rgba(0, 255, 255, 0.05);
+    backdrop-filter: blur(8px);
+    border-radius: 14px;
+    transition: opacity 0.3s ease, border-color 0.3s ease;
+  }
+  .panel-neon {
+    border-color: rgba(0, 255, 255, 0.4);
+    box-shadow: 0 0 15px rgba(0, 255, 255, 0.15), inset 0 0 15px rgba(0, 255, 255, 0.08);
+  }
+
+  /* Custom Glowing Sliders */
+  input[type=range] {
+    -webkit-appearance: none;
+    appearance: none;
+    background: #091418;
+    border: 1px solid #1a363b;
+    border-radius: 6px;
+    height: 8px;
+    outline: none;
+    transition: opacity 0.2s;
+  }
+  input[type=range]:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #00ffff;
+    cursor: pointer;
+    box-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff;
+    transition: transform 0.1s ease, background-color 0.1s;
+  }
+  input[type=range]:disabled::-webkit-slider-thumb {
+    background: #475569;
+    box-shadow: none;
+    cursor: not-allowed;
+  }
+  input[type=range]::-webkit-slider-thumb:hover:not(:disabled) {
+    transform: scale(1.2);
+    background: #ffffff;
+  }
+
+  /* Vertical EQ Sliders */
+  .eq-slider {
+    writing-mode: vertical-lr;
+    direction: rtl;
+    width: 24px;
+    height: 130px;
+    padding: 0;
+  }
+
+  /* Glowing Toggle Switches */
+  .glow-checkbox:checked + div {
+    background-color: #00ffff;
+    box-shadow: 0 0 12px #00ffff;
+  }
+  .glow-checkbox:checked + div .dot {
+    transform: translateX(100%);
+    background-color: #000;
+  }
+  .glow-checkbox:disabled + div {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+
+  /* Lock Mode Overlay Class */
+  .locked-ui {
+    opacity: 0.45;
+    pointer-events: none !important;
+    filter: grayscale(0.5);
+  }
+
+  /* MEDIA X PRO UI OVERRIDES */
+  main { width: min(100%, 1900px); }
+  .video-screen {
+    display:block; width:100%; height:min(72vh, 900px); min-height:480px;
+    aspect-ratio:16/9; background:#000;
+  }
+  .video-panel, .audio-deck { border-color:rgba(0,225,255,.32); }
+  .video-panel { box-shadow:0 14px 42px rgba(0,0,0,.55), inset 0 0 24px rgba(0,225,255,.045); }
+  .video-panel button, .audio-deck button, .action-btn, .profile-btn {
+    min-height:40px; font-weight:800; letter-spacing:.045em;
+    border-width:1px; transition:transform .15s ease, filter .15s ease, border-color .15s ease;
+  }
+  .video-panel button:hover, .audio-deck button:hover, .action-btn:hover, .profile-btn:hover {
+    filter:brightness(1.25); transform:translateY(-1px);
+  }
+  button:focus-visible, input:focus-visible {
+    outline:2px solid #67faff; outline-offset:3px;
+  }
+  #fileInput { min-height:44px; }
+  #audioUrl { min-height:42px; font-size:14px; }
+  #loadUrl { min-width:92px; min-height:42px; }
+  #audioPlayer { min-height:48px; }
+  #visualizer { display:block; height:230px; }
+  #trackerCanvas { display:block; width:100%; height:560px; }
+  .tracker-shell {
+    background:radial-gradient(ellipse at 50% 0%, rgba(0,220,240,.075), transparent 68%), #020608;
+    border:1px solid rgba(0,220,240,.28); border-radius:16px; padding:18px;
+  }
+  .eq-band-card { min-height:250px; }
+  @media (max-width:800px) {
+    .video-screen { height:56vw; min-height:260px; }
+    #trackerCanvas { height:430px; }
+    #visualizer { height:170px; }
+  }
+  @media (max-width:520px) {
+    .video-screen { min-height:220px; }
+    #trackerCanvas { height:360px; }
+  }
+
+
+  /* EXPANDED DJ EQ FADER BANK */
+  #eqGrid { align-items:stretch; }
+  .eq-band-card {
+    min-width:0;
+    min-height:310px;
+    padding:12px 4px 11px;
+    border:1px solid rgba(0,225,255,.25);
+    border-radius:13px;
+    background:linear-gradient(180deg,rgba(5,29,35,.96),rgba(2,8,12,.98));
+    box-shadow:inset 0 0 18px rgba(0,225,255,.035);
+    transition:border-color .18s ease, background .18s ease;
+  }
+  .eq-band-card:hover, .eq-band-card:focus-within {
+    border-color:rgba(0,245,255,.78);
+    background:linear-gradient(180deg,rgba(6,42,49,.98),rgba(2,10,15,.98));
+  }
+  .eq-band-number {
+    font:700 9px 'Orbitron',sans-serif;
+    letter-spacing:.12em;
+    color:#668b93;
+    margin-bottom:8px;
+  }
+  .eq-value {
+    display:block;
+    min-width:66px;
+    padding:5px 3px;
+    text-align:center;
+    border:1px solid rgba(0,235,255,.22);
+    border-radius:7px;
+    background:rgba(0,0,0,.55);
+    color:#72faff;
+    font:700 12px 'Orbitron',sans-serif;
+    text-shadow:0 0 8px rgba(0,255,255,.38);
+  }
+  .eq-fader-area {
+    position:relative;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    width:100%;
+    height:220px;
+    margin:8px 0 7px;
+  }
+  .eq-side-mark {
+    position:absolute;
+    left:2px;
+    color:#577780;
+    font:9px 'Rajdhani',sans-serif;
+    pointer-events:none;
+  }
+  .eq-side-top { top:1px; }
+  .eq-side-bottom { bottom:1px; }
+  input[type=range].eq-slider {
+    -webkit-appearance:slider-vertical !important;
+    appearance:auto !important;
+    writing-mode:vertical-lr !important;
+    direction:rtl !important;
+    display:block !important;
+    width:36px !important;
+    min-width:36px !important;
+    max-width:36px !important;
+    height:202px !important;
+    min-height:202px !important;
+    max-height:202px !important;
+    margin:0 auto !important;
+    padding:0 !important;
+    border:0 !important;
+    border-radius:20px !important;
+    background:linear-gradient(90deg,#06151a,#12343a 45%,#06151a) !important;
+    cursor:ns-resize !important;
+    touch-action:pan-x !important;
+    accent-color:#00eaff;
+  }
+  input[type=range].eq-slider::-webkit-slider-runnable-track {
+    width:10px;
+    border:1px solid rgba(0,235,255,.42);
+    border-radius:12px;
+    background:linear-gradient(90deg,#06171c,#0b4b55 50%,#06171c);
+    box-shadow:inset 0 0 5px rgba(0,0,0,.8);
+  }
+  input[type=range].eq-slider::-webkit-slider-thumb {
+    -webkit-appearance:none;
+    width:32px;
+    height:15px;
+    border:2px solid #d2ffff;
+    border-radius:5px;
+    background:linear-gradient(180deg,#f0ffff,#35dce8 48%,#087e91);
+    box-shadow:0 0 7px rgba(0,255,255,.45);
+    cursor:grab;
+  }
+  input[type=range].eq-slider::-moz-range-track {
+    width:10px;
+    border:1px solid rgba(0,235,255,.42);
+    border-radius:12px;
+    background:linear-gradient(90deg,#06171c,#0b4b55 50%,#06171c);
+  }
+  input[type=range].eq-slider::-moz-range-thumb {
+    width:29px;
+    height:13px;
+    border:2px solid #d2ffff;
+    border-radius:5px;
+    background:linear-gradient(180deg,#f0ffff,#35dce8 48%,#087e91);
+    box-shadow:0 0 7px rgba(0,255,255,.45);
+    cursor:grab;
+  }
+  .eq-frequency {
+    color:#d1faff;
+    font:700 11px 'Orbitron',sans-serif;
+    margin-top:2px;
+    white-space:nowrap;
+  }
+  .eq-band-caption {
+    color:#58727a;
+    font:8px 'Rajdhani',sans-serif;
+    letter-spacing:.15em;
+    margin-top:4px;
+  }
+  @media(max-width:640px) {
+    .eq-band-card { min-height:270px; padding:9px 2px; }
+    .eq-fader-area { height:185px; }
+    input[type=range].eq-slider {
+      height:168px !important; min-height:168px !important; max-height:168px !important;
+    }
+    .eq-frequency { font-size:9px; }
+    .eq-value { min-width:54px; font-size:10px; }
+  }
+
+</style>
+</head>
+<body class="min-h-screen pb-12">
+
+<!-- TOP HEADER -->
+<header class="h-16 px-6 bg-[#080d10] border-b border-cyan-900/40 flex items-center justify-between sticky top-0 z-50 shadow-lg shadow-cyan-950/20">
+  <div class="flex items-center gap-3">
+    <div class="w-3 h-8 bg-cyan-400 rounded-full animate-pulse shadow-[0_0_10px_#00ffff]"></div>
+    <div class="logo font-orbitron font-black text-xl sm:text-2xl tracking-wider text-cyan-400">
+      MEDIA X <span class="text-white text-sm sm:text-base font-normal">/ SOUND STUDIO PRO</span>
+    </div>
+  </div>
+  <div class="flex items-center gap-4">
+    <!-- NORMAL MODE / BYPASS TOGGLE -->
+    <label class="flex items-center cursor-pointer gap-2 bg-slate-900 px-3 py-1.5 rounded-lg border border-cyan-500/40 hover:border-cyan-400 transition">
+      <span class="text-xs font-bold font-orbitron text-cyan-300" id="bypassLabel">DJ MODE (ACTIVE)</span>
+      <input type="checkbox" id="bypassToggle" class="sr-only glow-checkbox">
+      <div class="w-10 h-5 bg-slate-800 rounded-full p-0.5 transition duration-200">
+        <div class="dot w-4 h-4 bg-slate-400 rounded-full transition duration-200"></div>
+      </div>
+    </label>
+    <span class="hidden sm:inline-block px-3 py-1 rounded-full text-xs font-mono border border-cyan-500/30 text-cyan-300 bg-cyan-950/30" id="audioStateBadge">
+      DSP ENGINE ACTIVE
+    </span>
+  </div>
+</header>
+
+<main class="max-w-[1900px] mx-auto px-3 sm:px-5 lg:px-7 pt-5 space-y-6">
+
+  <!-- TOP SECTION: YOUTUBE & AUDIO INPUT -->
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+    
+    <!-- YOUTUBE PLAYER EMBED -->
+    <section class="panel video-panel p-5 lg:col-span-12 flex flex-col justify-between">
+      <div>
+        <div class="flex justify-between items-center mb-3">
+          <h2 class="font-orbitron text-lg font-bold text-cyan-400 flex items-center gap-2">
+            <svg class="w-5 h-5 text-red-500" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+            YOUTUBE VIDEO COMPANION
+          </h2>
+          <span class="text-xs font-mono text-slate-400 bg-slate-900/60 px-2.5 py-1 rounded border border-slate-700">VIDEO SOURCE</span>
+        </div>
+        <iframe class="video-screen w-full rounded-xl bg-black border border-cyan-900/50" id="videoFrame" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen title="MEDIA X video player"></iframe>
+      </div>
+      <div class="flex flex-wrap gap-2 mt-3">
+        <button class="px-5 py-2.5 bg-cyan-950 border border-cyan-400 text-cyan-100 text-sm font-extrabold rounded-lg shadow-md shadow-cyan-950/40 transition" onclick="goFullscreen()">FULLSCREEN</button>
+        <button class="px-5 py-2.5 bg-cyan-950 border border-cyan-400 text-cyan-100 text-sm font-extrabold rounded-lg shadow-md shadow-cyan-950/40 transition" onclick="reloadVideo()">RELOAD</button>
+        <button class="px-5 py-2.5 bg-cyan-950 border border-cyan-400 text-cyan-100 text-sm font-extrabold rounded-lg shadow-md shadow-cyan-950/40 transition" onclick="shareVideo()">SHARE</button>
+      </div>
+    </section>
+
+    <!-- AUDIO SOURCE ENGINE & VISUALIZER -->
+    <section class="panel audio-deck p-5 lg:col-span-12 flex flex-col justify-between">
+      <div>
+        <div class="flex justify-between items-center mb-4">
+          <h2 class="font-orbitron text-lg font-bold text-cyan-400">01 / AUDIO SOURCE DECK</h2>
+          <span class="text-xs font-mono text-emerald-400 bg-emerald-950/50 px-2.5 py-1 rounded border border-emerald-800" id="engineStatus">ENGINE IDLE</span>
+        </div>
+
+        <div class="rounded-xl border border-cyan-500/30 bg-black/50 p-5">
+          <div class="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <h3 class="text-sm font-bold tracking-widest text-cyan-200">YOUTUBE LIVE AUDIO DETECTOR</h3>
+              <p class="text-xs text-slate-400 mt-1">Analyze the sound from the YouTube video playing above. No local MP3 or stream URL input.</p>
+            </div>
+            <span id="youtubeCaptureStatus" class="text-xs font-mono text-amber-300">NOT CONNECTED</span>
+          </div>
+          <div class="flex flex-wrap gap-3 mt-4">
+            <button id="connectYoutubeAudio" class="px-6 py-3 rounded-lg bg-cyan-400 hover:bg-cyan-300 text-black text-sm font-extrabold tracking-wider shadow-lg">CONNECT YOUTUBE AUDIO</button>
+            <button id="stopYoutubeAudio" disabled class="px-6 py-3 rounded-lg border border-rose-500/60 bg-rose-950/40 text-rose-200 text-sm font-extrabold tracking-wider disabled:opacity-40">STOP DETECTOR</button>
+          </div>
+          <p class="text-[11px] text-slate-500 mt-3">When Chrome asks what to share, select this studio tab and enable <b class="text-cyan-200">Share tab audio</b>. Keep the YouTube video playing.</p>
+          <div class="mt-3 flex justify-between items-center text-xs text-slate-400 font-mono">
+            <span id="audioStatus">Waiting for YouTube tab audio…</span>
+            <span id="peakStatus" class="text-cyan-300 font-bold">PEAK: 0%</span>
+          </div>
+        </div>
+        <!-- Compatibility-only hidden elements for the legacy DSP script; YouTube is the sole visible source. -->
+        <input type="file" id="fileInput" accept="audio/*" hidden>
+        <input id="audioUrl" type="url" hidden>
+        <button id="loadUrl" hidden></button>
+        <audio id="audioPlayer" hidden></audio>
+      </div>
+
+      <!-- MAIN SPECTRUM VISUALIZER -->
+      <div class="relative mt-3">
+        <canvas id="visualizer" class="w-full h-[190px] sm:h-[230px] bg-black/80 rounded-xl border border-cyan-900/40"></canvas>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- 5-LINE LIVE FREQUENCY & BASS SOUND TRACKER -->
+  <section class="panel p-6">
+    <div class="flex justify-between items-center mb-4">
+      <div>
+        <h2 class="font-orbitron text-lg font-bold text-cyan-400 flex items-center gap-2">
+          <svg class="w-5 h-5 text-cyan-400 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 .895-2 3-2 3 .895 3 2zm12 0c0 1.105-1.343 2-3 2s-3-.895-3-2 .895-2 3-2 3 .895 3 2zM9 10l12-3"></path></svg>
+          02 / 5-LINE LIVE FREQUENCY & BASS SOUND TRACKER
+        </h2>
+        <p class="text-xs text-slate-400 mt-0.5">Same 5-column live audio tracker. NORMAL = original input • DJ = post-EQ / post-effects signal.</p>
+      </div>
+      <span class="text-xs font-mono text-emerald-400 bg-emerald-950/60 px-3 py-1 rounded border border-emerald-800">LIVE VU • 0–200%</span>
+    </div>
+
+    <div class="tracker-shell">
+      <div class="flex flex-wrap justify-between gap-2 text-[10px] tracking-widest text-slate-500 mb-3"><span>LIVE AUDIO • NORMAL: ORIGINAL / DJ: PROCESSED</span><span>LOW → HIGH FREQUENCY</span></div>
+      <canvas id="trackerCanvas" class="w-full h-[560px] rounded-lg"></canvas>
+      <div class="flex flex-wrap gap-4 text-[10px] text-slate-500 mt-2"><span>▰ SUB / BASS</span><span>▰ MID</span><span>▰ TREBLE</span><span>REAL AUDIO • 0–200% EXTENDED SCALE</span></div>
+    </div>
+  </section>
+
+  <!-- ALL EDITABLE CONTROLS CONTAINER (LOCKED WHEN NORMAL MODE IS ON) -->
+  <div id="editableControlsContainer" class="space-y-6 transition-all duration-300">
+
+    <!-- SUB-BASS HARMONIC ENHANCER & SUB ENGINE -->
+    <section class="panel panel-neon p-6">
+      <div class="flex flex-wrap justify-between items-center gap-4 mb-6">
+        <div>
+          <h2 class="font-orbitron text-xl font-black text-cyan-300 tracking-wide flex items-center gap-2">
+            <span class="inline-block w-3 h-3 bg-cyan-400 rounded-full animate-ping"></span>
+            03 / PSYCHOACOUSTIC SUB-BASS HARMONIC ENHANCER
+          </h2>
+          <p class="text-xs text-slate-400 mt-1">Generates upper sub-harmonics for physical bass resonance even on smaller mobile/laptop drivers.</p>
+        </div>
+        <div class="flex items-center gap-4">
+          <!-- HARMONICS ENGINE TOGGLE -->
+          <label class="flex items-center cursor-pointer gap-2 bg-black/50 px-3 py-2 rounded-lg border border-cyan-900/60">
+            <span class="text-xs font-bold text-cyan-300">HARMONICS ENGINE</span>
+            <input type="checkbox" id="bassHarmonicsToggle" class="sr-only glow-checkbox" checked>
+            <div class="w-9 h-5 bg-slate-800 rounded-full p-0.5 transition duration-200">
+              <div class="dot w-4 h-4 bg-slate-400 rounded-full transition duration-200"></div>
+            </div>
+          </label>
+          <!-- BASS TURBO BOOST TOGGLE -->
+          <label class="flex items-center cursor-pointer gap-2 bg-red-950/40 px-3 py-2 rounded-lg border border-red-900/60">
+            <span class="text-xs font-bold text-red-400 animate-pulse">BASS TURBO (+12dB)</span>
+            <input type="checkbox" id="bassTurboToggle" class="sr-only glow-checkbox">
+            <div class="w-9 h-5 bg-slate-800 rounded-full p-0.5 transition duration-200">
+              <div class="dot w-4 h-4 bg-slate-400 rounded-full transition duration-200"></div>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-5">
+        <div class="bg-black/50 p-4 rounded-xl border border-cyan-900/40">
+          <div class="flex justify-between items-center mb-2">
+            <label class="text-xs font-bold text-cyan-300">SUB HARMONIC DRIVE</label>
+            <output id="subDriveOut" class="text-sm font-mono font-bold text-cyan-400">40%</output>
+          </div>
+          <input id="subDrive" type="range" min="0" max="100" value="40" class="w-full">
+          <p class="text-[10px] text-slate-400 mt-2">Harmonic saturation intensity</p>
+        </div>
+
+        <div class="bg-black/50 p-4 rounded-xl border border-cyan-900/40">
+          <div class="flex justify-between items-center mb-2">
+            <label class="text-xs font-bold text-cyan-300">BASS FREQ CUTOFF</label>
+            <output id="bassCutoffOut" class="text-sm font-mono font-bold text-cyan-400">80 Hz</output>
+          </div>
+          <input id="bassCutoff" type="range" min="40" max="160" value="80" class="w-full">
+          <p class="text-[10px] text-slate-400 mt-2">Target sub-frequency cutoff</p>
+        </div>
+
+        <div class="bg-black/50 p-4 rounded-xl border border-cyan-900/40">
+          <div class="flex justify-between items-center mb-2">
+            <label class="text-xs font-bold text-cyan-300">EXTREME BASS BOOST</label>
+            <output id="bassBoostGainOut" class="text-sm font-mono font-bold text-cyan-400">+6 dB</output>
+          </div>
+          <input id="bassBoostGain" type="range" min="-6" max="18" value="6" step="0.5" class="w-full">
+          <p class="text-[10px] text-slate-400 mt-2">Up to +18dB massive low-end boost</p>
+        </div>
+
+        <div class="bg-black/50 p-4 rounded-xl border border-cyan-900/40">
+          <div class="flex justify-between items-center mb-2">
+            <label class="text-xs font-bold text-cyan-300">SUB RESONANCE (Q)</label>
+            <output id="subResonanceOut" class="text-sm font-mono font-bold text-cyan-400">2.5</output>
+          </div>
+          <input id="subResonance" type="range" min="0.5" max="6" value="2.5" step="0.1" class="w-full">
+          <p class="text-[10px] text-slate-400 mt-2">Low-end punch tightness</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- GENRE & ACOUSTIC PRESET BUTTONS -->
+    <section class="panel p-5">
+      <div class="flex justify-between items-center mb-3">
+        <h2 class="font-orbitron text-lg font-bold text-cyan-400">04 / GENRE & ACOUSTIC SOUND PRESETS</h2>
+        <span class="text-xs text-slate-400">Instant EQ & Sub-Bass profiles</span>
+      </div>
+
+      <div class="grid grid-cols-2 sm:grid-cols-5 md:grid-cols-10 gap-3" id="profileGrid">
+        <!-- GENRE PRESETS -->
+        <button class="profile-btn px-2.5 py-2 bg-cyan-950 border border-cyan-400 rounded-xl text-center transition shadow-[0_0_10px_rgba(0,255,255,0.2)]" data-profile="clubBass">
+          <div class="text-base">🔥</div>
+          <div class="text-[11px] font-bold text-cyan-300 mt-1">Club Bass</div>
+        </button>
+        <button class="profile-btn px-2.5 py-2 bg-black/60 hover:bg-cyan-950 border border-cyan-900/50 rounded-xl text-center transition" data-profile="dubstep">
+          <div class="text-base">⚡</div>
+          <div class="text-[11px] font-bold text-cyan-300 mt-1">Dubstep</div>
+        </button>
+        <button class="profile-btn px-2.5 py-2 bg-black/60 hover:bg-cyan-950 border border-cyan-900/50 rounded-xl text-center transition" data-profile="hiphop">
+          <div class="text-base">🎤</div>
+          <div class="text-[11px] font-bold text-cyan-300 mt-1">Hip-Hop</div>
+        </button>
+
+        <!-- DEVICE TARGET PRESETS -->
+        <button class="profile-btn px-2.5 py-2 bg-black/60 hover:bg-cyan-950 border border-cyan-900/50 rounded-xl text-center transition" data-profile="mobile">
+          <div class="text-base">📱</div>
+          <div class="text-[11px] font-bold text-cyan-300 mt-1">Mobile</div>
+        </button>
+        <button class="profile-btn px-2.5 py-2 bg-black/60 hover:bg-cyan-950 border border-cyan-900/50 rounded-xl text-center transition" data-profile="laptop">
+          <div class="text-base">💻</div>
+          <div class="text-[11px] font-bold text-cyan-300 mt-1">Laptop</div>
+        </button>
+        <button class="profile-btn px-2.5 py-2 bg-black/60 hover:bg-cyan-950 border border-cyan-900/50 rounded-xl text-center transition" data-profile="tv">
+          <div class="text-base">📺</div>
+          <div class="text-[11px] font-bold text-cyan-300 mt-1">TV Bar</div>
+        </button>
+        <button class="profile-btn px-2.5 py-2 bg-black/60 hover:bg-cyan-950 border border-cyan-900/50 rounded-xl text-center transition" data-profile="speaker">
+          <div class="text-base">🔊</div>
+          <div class="text-[11px] font-bold text-cyan-300 mt-1">Speakers</div>
+        </button>
+        <button class="profile-btn px-2.5 py-2 bg-black/60 hover:bg-cyan-950 border border-cyan-900/50 rounded-xl text-center transition" data-profile="car">
+          <div class="text-base">🚗</div>
+          <div class="text-[11px] font-bold text-cyan-300 mt-1">Car Audio</div>
+        </button>
+        <button class="profile-btn px-2.5 py-2 bg-black/60 hover:bg-cyan-950 border border-cyan-900/50 rounded-xl text-center transition" data-profile="club">
+          <div class="text-base">🎧</div>
+          <div class="text-[11px] font-bold text-cyan-300 mt-1">Club System</div>
+        </button>
+        <button class="profile-btn px-2.5 py-2 bg-black/60 hover:bg-cyan-950 border border-cyan-900/50 rounded-xl text-center transition" data-profile="cinema">
+          <div class="text-base">🎬</div>
+          <div class="text-[11px] font-bold text-cyan-300 mt-1">Cinema Sub</div>
+        </button>
+      </div>
+    </section>
+
+    <!-- 10-BAND GRAPHIC EQUALIZER & MIXER -->
+    <section class="panel p-6">
+      <div class="flex flex-wrap justify-between items-center gap-3 mb-4">
+        <h2 class="font-orbitron text-lg font-bold text-cyan-400">05 / 10-BAND GRAPHIC EQUALIZER & TONE</h2>
+        <div class="flex gap-2">
+          <button id="flatEq" class="action-btn px-3 py-1 bg-black border border-cyan-800 text-cyan-300 text-xs font-semibold rounded hover:bg-cyan-950">FLAT EQ</button>
+          <button id="bassBoostEq" class="action-btn px-3 py-1 bg-cyan-950 border border-cyan-400 text-cyan-300 text-xs font-semibold rounded hover:bg-cyan-900">BASS WALL (+12dB)</button>
+          <button id="resetEq" class="action-btn px-3 py-1 bg-black border border-cyan-800 text-cyan-300 text-xs font-semibold rounded hover:bg-cyan-950">RESET</button>
+        </div>
+      </div>
+
+      <!-- EXPANDED 10-BAND DJ FADER BANK -->
+      <div class="eq-bank-heading flex flex-wrap items-center justify-between gap-2 mb-3">
+        <div>
+          <div class="text-sm font-extrabold tracking-widest text-cyan-200">10-CHANNEL DJ FADER BANK</div>
+          <div class="text-xs text-slate-400 mt-1">Drag each fader vertically • -12 dB to +12 dB • live sound response</div>
+        </div>
+        <div class="eq-range-key text-[10px] text-slate-500">UP = BOOST&nbsp;&nbsp; / &nbsp;&nbsp;DOWN = CUT</div>
+      </div>
+      <div class="grid grid-cols-5 sm:grid-cols-10 gap-2 sm:gap-3 bg-black/50 p-3 sm:p-5 rounded-xl border border-cyan-700/40 mb-6" id="eqGrid">
+        <!-- Generated via JS -->
+      </div>
+
+      <!-- TONE CONTROLS -->
+      <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">TONE SHAPING CONTROLS</h3>
+      <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-4">
+        <div class="bg-black/40 p-3 rounded-lg border border-cyan-900/30">
+          <label class="text-[11px] font-bold text-cyan-300 block mb-1">SUB BASS</label>
+          <output id="subOut" class="text-lg font-bold text-cyan-400 block mb-1">0 dB</output>
+          <input id="sub" type="range" min="-12" max="18" value="0" step="0.5" class="w-full">
+          <span class="text-[9px] text-slate-500">20-60 Hz</span>
+        </div>
+        <div class="bg-black/40 p-3 rounded-lg border border-cyan-900/30">
+          <label class="text-[11px] font-bold text-cyan-300 block mb-1">MID BASS</label>
+          <output id="bassOut" class="text-lg font-bold text-cyan-400 block mb-1">0 dB</output>
+          <input id="bass" type="range" min="-12" max="18" value="0" step="0.5" class="w-full">
+          <span class="text-[9px] text-slate-500">60-150 Hz</span>
+        </div>
+        <div class="bg-black/40 p-3 rounded-lg border border-cyan-900/30">
+          <label class="text-[11px] font-bold text-cyan-300 block mb-1">KICK PUNCH</label>
+          <output id="punchOut" class="text-lg font-bold text-cyan-400 block mb-1">0 dB</output>
+          <input id="punch" type="range" min="-12" max="18" value="0" step="0.5" class="w-full">
+          <span class="text-[9px] text-slate-500">150-400 Hz</span>
+        </div>
+        <div class="bg-black/40 p-3 rounded-lg border border-cyan-900/30">
+          <label class="text-[11px] font-bold text-cyan-300 block mb-1">VOCAL MID</label>
+          <output id="midOut" class="text-lg font-bold text-cyan-400 block mb-1">0 dB</output>
+          <input id="mid" type="range" min="-12" max="18" value="0" step="0.5" class="w-full">
+          <span class="text-[9px] text-slate-500">400-3000 Hz</span>
+        </div>
+        <div class="bg-black/40 p-3 rounded-lg border border-cyan-900/30">
+          <label class="text-[11px] font-bold text-cyan-300 block mb-1">TREBLE</label>
+          <output id="trebleOut" class="text-lg font-bold text-cyan-400 block mb-1">0 dB</output>
+          <input id="treble" type="range" min="-12" max="18" value="0" step="0.5" class="w-full">
+          <span class="text-[9px] text-slate-500">3-20 kHz</span>
+        </div>
+        <div class="bg-black/40 p-3 rounded-lg border border-cyan-500/30">
+          <label class="text-[11px] font-bold text-cyan-200 block mb-1">LOW END IMPACT</label>
+          <output id="impactOut" class="text-lg font-bold text-cyan-300 block mb-1">0 dB</output>
+          <input id="impact" type="range" min="0" max="12" value="0" step="0.5" class="w-full">
+          <span class="text-[9px] text-slate-500">Kick / 120 Hz</span>
+        </div>
+        <div class="bg-black/40 p-3 rounded-lg border border-cyan-500/30">
+          <label class="text-[11px] font-bold text-cyan-200 block mb-1">VOCAL PRESENCE</label>
+          <output id="presenceOut" class="text-lg font-bold text-cyan-300 block mb-1">0 dB</output>
+          <input id="presence" type="range" min="-6" max="9" value="0" step="0.5" class="w-full">
+          <span class="text-[9px] text-slate-500">Clarity / 3.2 kHz</span>
+        </div>
+        <div class="bg-black/40 p-3 rounded-lg border border-cyan-500/30">
+          <label class="text-[11px] font-bold text-cyan-200 block mb-1">AIR DETAIL</label>
+          <output id="airOut" class="text-lg font-bold text-cyan-300 block mb-1">0 dB</output>
+          <input id="air" type="range" min="-6" max="12" value="0" step="0.5" class="w-full">
+          <span class="text-[9px] text-slate-500">Sparkle / 12 kHz</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- DJ LIVE EFFECTS PROCESSOR RACK -->
+    <section class="panel p-6">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="font-orbitron text-lg font-bold text-cyan-400">06 / LIVE DJ EFFECTS PROCESSOR RACK</h2>
+        <span class="text-xs font-mono text-cyan-300 bg-cyan-950/60 px-3 py-1 rounded border border-cyan-800">REAL-TIME DSP</span>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        
+        <!-- DUAL DJ FILTER -->
+        <div class="bg-black/50 p-4 rounded-xl border border-cyan-900/40">
+          <div class="flex justify-between items-center mb-2">
+            <label class="text-xs font-bold text-cyan-300">DJ DUAL FILTER (LPF &lt; OFF &gt; HPF)</label>
+            <output id="djFilterOut" class="text-xs font-mono font-bold text-cyan-400">BYPASS</output>
+          </div>
+          <input id="djFilter" type="range" min="-100" max="100" value="0" class="w-full">
+          <div class="flex justify-between text-[9px] text-slate-500 mt-1">
+            <span>LOWPASS</span>
+            <span>FLAT</span>
+            <span>HIGHPASS</span>
+          </div>
+        </div>
+
+        <!-- DELAY -->
+        <div class="bg-black/50 p-4 rounded-xl border border-cyan-900/40">
+          <div class="flex justify-between items-center mb-2">
+            <label class="text-xs font-bold text-cyan-300">PING-PONG DELAY WET</label>
+            <output id="echoOut" class="text-xs font-mono font-bold text-cyan-400">0%</output>
+          </div>
+          <input id="echo" type="range" min="0" max="80" value="0" class="w-full">
+          <div class="mt-2 flex justify-between items-center">
+            <span class="text-[10px] text-slate-400">DELAY TIME</span>
+            <output id="delayTimeOut" class="text-[10px] font-mono text-cyan-400">300 ms</output>
+          </div>
+          <input id="delayTime" type="range" min="60" max="800" value="300" class="w-full mt-1">
+        </div>
+
+        <!-- REVERB -->
+        <div class="bg-black/50 p-4 rounded-xl border border-cyan-900/40">
+          <div class="flex justify-between items-center mb-2">
+            <label class="text-xs font-bold text-cyan-300">STUDIO REVERB</label>
+            <output id="reverbOut" class="text-xs font-mono font-bold text-cyan-400">0%</output>
+          </div>
+          <input id="reverb" type="range" min="0" max="80" value="0" class="w-full">
+          <p class="text-[10px] text-slate-400 mt-2">Acoustic space convolver</p>
+        </div>
+
+        <!-- OVERDRIVE -->
+        <div class="bg-black/50 p-4 rounded-xl border border-cyan-900/40">
+          <div class="flex justify-between items-center mb-2">
+            <label class="text-xs font-bold text-cyan-300">ANALOG OVERDRIVE / DRIVE</label>
+            <output id="driveOut" class="text-xs font-mono font-bold text-cyan-400">0%</output>
+          </div>
+          <input id="drive" type="range" min="0" max="100" value="0" class="w-full">
+          <p class="text-[10px] text-slate-400 mt-2">Harmonic warm tube saturation</p>
+        </div>
+
+        <!-- FLANGER -->
+        <div class="bg-black/50 p-4 rounded-xl border border-cyan-900/40">
+          <div class="flex justify-between items-center mb-2">
+            <label class="text-xs font-bold text-cyan-300">FLANGER / CHORUS SWEEP</label>
+            <output id="flangerOut" class="text-xs font-mono font-bold text-cyan-400">OFF</output>
+          </div>
+          <input id="flanger" type="range" min="0" max="100" value="0" class="w-full">
+          <p class="text-[10px] text-slate-400 mt-2">LFO modulation depth</p>
+        </div>
+
+        <!-- STEREO PANNER -->
+        <div class="bg-black/50 p-4 rounded-xl border border-cyan-900/40">
+          <div class="flex justify-between items-center mb-2">
+            <label class="text-xs font-bold text-cyan-300">STEREO BALANCE</label>
+            <output id="panOut" class="text-xs font-mono font-bold text-cyan-400">CENTER</output>
+          </div>
+          <input id="pan" type="range" min="-100" max="100" value="0" class="w-full">
+          <p class="text-[10px] text-slate-400 mt-2">Left / Right channel balance</p>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- MASTER SECTION & DYNAMICS -->
+    <section class="panel p-6">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="font-orbitron text-lg font-bold text-cyan-400">07 / MASTER OUT & DYNAMICS LIMITER</h2>
+        <span class="text-xs font-mono text-emerald-400">ZERO DISTORTION LIMITER</span>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        
+        <!-- MASTER VOLUME -->
+        <div class="bg-black/40 p-4 rounded-xl border border-cyan-900/40">
+          <div class="flex justify-between items-center mb-2">
+            <label class="text-xs font-bold text-cyan-300">MASTER VOLUME</label>
+            <output id="volumeOut" class="text-lg font-bold font-mono text-cyan-400">80%</output>
+          </div>
+          <input id="volume" type="range" min="0" max="100" value="80" class="w-full">
+        </div>
+
+        <!-- MASTER DYNAMIC COMPRESSOR -->
+        <div class="bg-black/40 p-4 rounded-xl border border-cyan-900/40">
+          <div class="flex justify-between items-center mb-2">
+            <label class="text-xs font-bold text-cyan-300">PUNCH COMPRESSOR</label>
+            <output id="compressionOut" class="text-lg font-bold font-mono text-cyan-400">40%</output>
+          </div>
+          <input id="compression" type="range" min="0" max="100" value="40" class="w-full">
+        </div>
+
+        <!-- PRESET MANAGEMENT & LIMITER -->
+        <div class="bg-black/40 p-4 rounded-xl border border-cyan-900/40 flex flex-col justify-between">
+          <div class="flex justify-between items-center">
+            <span class="text-xs font-bold text-cyan-300">PEAK CLIPPER / LIMITER</span>
+            <span class="text-[10px] bg-cyan-950 text-cyan-300 px-2 py-0.5 rounded border border-cyan-700">ACTIVE (-0.5dB)</span>
+          </div>
+          <p class="text-[10px] text-slate-400 mt-1">Prevents DAC clipping & speaker blowout during extreme sub-bass boosts.</p>
+          <div class="flex gap-2 mt-3">
+            <button id="savePreset" class="action-btn flex-1 py-1.5 bg-cyan-400 hover:bg-cyan-300 text-black font-bold text-xs rounded transition">SAVE PRESET</button>
+            <button id="loadPreset" class="action-btn flex-1 py-1.5 bg-black border border-cyan-700 text-cyan-300 font-bold text-xs rounded hover:bg-cyan-950">LOAD PRESET</button>
+            <button id="resetAll" class="action-btn px-3 py-1.5 bg-red-950/60 border border-red-800 text-red-300 font-bold text-xs rounded hover:bg-red-900">RESET ALL</button>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </div>
+
+</main>
+
+<script>
+// ============================================================================
+// 1. YOUTUBE EMBED HANDLER
+// ============================================================================
+const params = new URLSearchParams(location.search);
+const videoId = params.get("id");
+const frame = document.getElementById("videoFrame");
+
+if (videoId) {
+  frame.src = "https://www.youtube.com/embed/" + encodeURIComponent(videoId) + "?autoplay=1";
+} else {
+  frame.src = "https://www.youtube.com/embed/dQw4w9WgXcQ";
+}
+
+function goFullscreen() { frame.requestFullscreen?.(); }
+function reloadVideo() {
+  const current = frame.src;
+  frame.src = "";
+  setTimeout(() => frame.src = current, 100);
+}
+function shareVideo() {
+  if (navigator.clipboard) {
+    document.execCommand('copy');
+    alert("Studio URL copied to clipboard!");
+  }
+}
+
+// ============================================================================
+// 2. WEB AUDIO ENGINE (ADVANCED DSP ARCHITECTURE)
+// ============================================================================
+const audio = document.getElementById("audioPlayer");
+const engineStatus = document.getElementById("engineStatus");
+const audioStateBadge = document.getElementById("audioStateBadge");
+const audioStatus = document.getElementById("audioStatus");
+
+let ctx = null;
+let source = null;
+let initialized = false;
+let objectURL = null;
+
+// DSP Nodes Dictionary
+const nodes = {};
+let eqNodes = [];
+
+// Frequencies for 10-Band EQ
+const frequencies = [32, 64, 125, 250, 500, 1000, 2000, 4000, 8000, 16000];
+const frequencyLabels = ["32Hz", "64Hz", "125Hz", "250Hz", "500Hz", "1kHz", "2kHz", "4kHz", "8kHz", "16kHz"];
+
+// Construct 10-Band EQ GUI
+const eqGrid = document.getElementById("eqGrid");
+frequencies.forEach((freq, i) => {
+  const band = document.createElement("div");
+  band.className = "eq-band-card flex flex-col items-center";
+  band.innerHTML = `
+    <span class="eq-band-number">CH ${String(i + 1).padStart(2, "0")}</span>
+    <output id="eqLabel${i}" class="eq-value">0.0 dB</output>
+    <div class="eq-fader-area">
+      <span class="eq-side-mark eq-side-top">+12</span>
+      <input type="range" id="eq${i}" min="-12" max="12" step="0.5" value="0"
+        class="eq-slider" aria-label="${freq} Hz equalizer gain" orient="vertical">
+      <span class="eq-side-mark eq-side-bottom">-12</span>
+    </div>
+    <span class="eq-frequency">${frequencyLabels[i]}</span>
+    <span class="eq-band-caption">GAIN / dB</span>
+  `;
+  eqGrid.appendChild(band);
+});
+
+// WaveShaper Distortion Curve Generator
+function makeDriveCurve(amount) {
+  const samples = 44100;
+  const curve = new Float32Array(samples);
+  const k = amount * 3;
+  const normal = Math.tanh(1 + k);
+  for (let i = 0; i < samples; ++i) {
+    const x = (i * 2) / samples - 1;
+    curve[i] = k === 0 ? x : Math.tanh(x * (1 + k)) / normal;
+  }
+  return curve;
+}
+
+// Synthetic Impulse Response for Reverb
+function makeReverbBuffer(ctx) {
+  const rate = ctx.sampleRate;
+  const length = Math.floor(rate * 2.5);
+  const buffer = ctx.createBuffer(2, length, rate);
+  for (let channel = 0; channel < 2; channel++) {
+    const data = buffer.getChannelData(channel);
+    for (let i = 0; i < length; i++) {
+      const decay = Math.pow(1 - i / length, 2.5);
+      data[i] = (Math.random() * 2 - 1) * decay;
+    }
+  }
+  return buffer;
+}
+
+// Build Engine DSP Pipeline
+function initializeEngine() {
+  if (initialized) return;
+
+  const AC = window.AudioContext || window.webkitAudioContext;
+  if (!AC) return alert("Web Audio API not supported in this browser.");
+
+  ctx = new AC();
+  source = ctx.createMediaElementSource(audio);
+
+  // 1. Input Node
+  nodes.input = ctx.createGain();
+
+  // 2. Highpass Rumble Filter
+  nodes.rumbleFilter = ctx.createBiquadFilter();
+  nodes.rumbleFilter.type = "highpass";
+  nodes.rumbleFilter.frequency.value = 18;
+
+  // 3. Sub-Bass Harmonic Enhancer (MaxxBass style split routing)
+  nodes.subLowpass = ctx.createBiquadFilter();
+  nodes.subLowpass.type = "lowpass";
+  nodes.subLowpass.frequency.value = 80;
+
+  nodes.subDrive = ctx.createWaveShaper();
+  nodes.subDrive.curve = makeDriveCurve(0.4);
+
+  nodes.subGain = ctx.createGain();
+  nodes.subGain.gain.value = 1.0;
+
+  // 4. Tone Controls
+  nodes.sub = ctx.createBiquadFilter();
+  nodes.sub.type = "lowshelf";
+  nodes.sub.frequency.value = 50;
+
+  nodes.bass = ctx.createBiquadFilter();
+  nodes.bass.type = "peaking";
+  nodes.bass.frequency.value = 100;
+  nodes.bass.Q.value = 1.0;
+
+  nodes.punch = ctx.createBiquadFilter();
+  nodes.punch.type = "peaking";
+  nodes.punch.frequency.value = 250;
+  nodes.punch.Q.value = 1.2;
+
+  nodes.mid = ctx.createBiquadFilter();
+  nodes.mid.type = "peaking";
+  nodes.mid.frequency.value = 1200;
+  nodes.mid.Q.value = 0.8;
+
+  nodes.treble = ctx.createBiquadFilter();
+  nodes.treble.type = "highshelf";
+  nodes.treble.frequency.value = 6000;
+
+  nodes.impact = ctx.createBiquadFilter();
+  nodes.impact.type = "peaking";
+  nodes.impact.frequency.value = 120;
+  nodes.impact.Q.value = 1.1;
+  nodes.presence = ctx.createBiquadFilter();
+  nodes.presence.type = "peaking";
+  nodes.presence.frequency.value = 3200;
+  nodes.presence.Q.value = 0.9;
+  nodes.air = ctx.createBiquadFilter();
+  nodes.air.type = "highshelf";
+  nodes.air.frequency.value = 12000;
+
+  // 5. 10-Band Graphic EQ Nodes
+  eqNodes = frequencies.map(f => {
+    const filter = ctx.createBiquadFilter();
+    filter.type = "peaking";
+    filter.frequency.value = f;
+    filter.Q.value = 1.4;
+    return filter;
+  });
+
+  // 6. DJ Dual Filter
+  nodes.djFilterLP = ctx.createBiquadFilter();
+  nodes.djFilterLP.type = "lowpass";
+  nodes.djFilterLP.frequency.value = 20000;
+
+  nodes.djFilterHP = ctx.createBiquadFilter();
+  nodes.djFilterHP.type = "highpass";
+  nodes.djFilterHP.frequency.value = 20;
+
+  // 7. Overdrive Saturation
+  nodes.drive = ctx.createWaveShaper();
+  nodes.drive.curve = makeDriveCurve(0);
+
+  // 8. Flanger Effect
+  nodes.flangerDelay = ctx.createDelay();
+  nodes.flangerDelay.delayTime.value = 0.005;
+  nodes.flangerFeedback = ctx.createGain();
+  nodes.flangerFeedback.gain.value = 0.3;
+  nodes.flangerWet = ctx.createGain();
+  nodes.flangerWet.gain.value = 0;
+  nodes.flangerLFO = ctx.createOscillator();
+  nodes.flangerLFOGain = ctx.createGain();
+  nodes.flangerLFO.frequency.value = 0.25;
+  nodes.flangerLFOGain.gain.value = 0.003;
+  nodes.flangerLFO.connect(nodes.flangerDelay.delayTime);
+  nodes.flangerLFO.start();
+
+  // 9. Delay (Ping Pong Echo)
+  nodes.delay = ctx.createDelay(2.0);
+  nodes.delay.delayTime.value = 0.3;
+  nodes.delayFeedback = ctx.createGain();
+  nodes.delayFeedback.gain.value = 0.35;
+  nodes.delayWet = ctx.createGain();
+  nodes.delayWet.gain.value = 0;
+
+  // 10. Reverb Unit
+  nodes.reverb = ctx.createConvolver();
+  nodes.reverb.buffer = makeReverbBuffer(ctx);
+  nodes.reverbWet = ctx.createGain();
+  nodes.reverbWet.gain.value = 0;
+
+  // 11. Stereo Panner
+  nodes.pan = ctx.createStereoPanner();
+
+  // 12. Dynamic Compressor
+  nodes.compressor = ctx.createDynamicsCompressor();
+  nodes.compressor.threshold.value = -16;
+  nodes.compressor.knee.value = 10;
+  nodes.compressor.ratio.value = 4;
+  nodes.compressor.attack.value = 0.01;
+  nodes.compressor.release.value = 0.15;
+
+  // 13. Master Out & Peak Limiter
+  nodes.limiter = ctx.createDynamicsCompressor();
+  nodes.limiter.threshold.value = -0.5;
+  nodes.limiter.knee.value = 0;
+  nodes.limiter.ratio.value = 20;
+  nodes.limiter.attack.value = 0.001;
+  nodes.limiter.release.value = 0.05;
+
+  nodes.masterGain = ctx.createGain();
+  nodes.masterGain.gain.value = 0.8;
+
+  // Analyser
+  nodes.analyser = ctx.createAnalyser(); // Original input / pre-DSP
+  nodes.analyser.fftSize = 2048;
+  nodes.analyser.smoothingTimeConstant = 0.72;
+  nodes.postTrackerAnalyser = ctx.createAnalyser(); // Post-DSP / post-effects
+  nodes.postTrackerAnalyser.fftSize = 2048;
+  nodes.postTrackerAnalyser.smoothingTimeConstant = 0.72;
+  nodes.outputGate = ctx.createGain();
+  nodes.outputGate.gain.value = 1;
+
+  // --- CONNECT AUDIO GRAPH ---
+  source.connect(nodes.input);
+  nodes.input.connect(nodes.rumbleFilter);
+
+  // Sub Harmonics parallel branch
+  nodes.rumbleFilter.connect(nodes.subLowpass);
+  nodes.subLowpass.connect(nodes.subDrive);
+  nodes.subDrive.connect(nodes.subGain);
+
+  // Main Tone Chain
+  let current = nodes.rumbleFilter;
+  const toneChain = [
+    nodes.sub,
+    nodes.bass,
+    nodes.punch,
+    nodes.mid,
+    nodes.treble,
+    nodes.impact,
+    nodes.presence,
+    nodes.air,
+    ...eqNodes,
+    nodes.djFilterLP,
+    nodes.djFilterHP,
+    nodes.drive
+  ];
+
+  toneChain.forEach(node => {
+    current.connect(node);
+    current = node;
+  });
+
+  // Combine main chain and Sub-Harmonics
+  nodes.subGain.connect(current);
+
+  // FX Send - Flanger
+  current.connect(nodes.flangerDelay);
+  nodes.flangerDelay.connect(nodes.flangerWet);
+  nodes.flangerDelay.connect(nodes.flangerFeedback);
+  nodes.flangerFeedback.connect(nodes.flangerDelay);
+
+  // FX Send - Delay
+  current.connect(nodes.delay);
+  nodes.delay.connect(nodes.delayWet);
+  nodes.delay.connect(nodes.delayFeedback);
+  nodes.delayFeedback.connect(nodes.delay);
+
+  // FX Send - Reverb
+  current.connect(nodes.reverb);
+  nodes.reverb.connect(nodes.reverbWet);
+
+  // Mix Dry + FX
+  const dryGain = ctx.createGain();
+  dryGain.gain.value = 1.0;
+  current.connect(dryGain);
+
+  dryGain.connect(nodes.pan);
+  nodes.flangerWet.connect(nodes.pan);
+  nodes.delayWet.connect(nodes.pan);
+  nodes.reverbWet.connect(nodes.pan);
+
+  // Master Dynamics Chain
+  nodes.pan.connect(nodes.compressor);
+  nodes.compressor.connect(nodes.limiter);
+  nodes.limiter.connect(nodes.masterGain);
+  // Analyzer is a silent monitor tap: it feeds meters only, never the speakers.
+  nodes.masterGain.connect(nodes.postTrackerAnalyser);
+  nodes.masterGain.connect(nodes.outputGate);
+  nodes.outputGate.connect(ctx.destination);
+  nodes.input.connect(nodes.analyser);
+  nodes.monitorMute = ctx.createGain();
+  nodes.monitorMute.gain.value = 0;
+  nodes.analyser.connect(nodes.monitorMute);
+  nodes.monitorMute.connect(ctx.destination);
+
+  initialized = true;
+  engineStatus.textContent = "ENGINE ACTIVE";
+  engineStatus.className = "text-xs font-mono text-cyan-400 bg-cyan-950/80 px-2.5 py-1 rounded border border-cyan-500 shadow-[0_0_10px_#00ffff]";
+  audioStateBadge.textContent = "DSP ENGINE ACTIVE";
+
+  applySettings();
+  initVisualizer();
+}
+
+// Helper to update AudioParam smoothly
+function setParam(param, val, time = 0.04) {
+  if (!param) return;
+  param.setTargetAtTime(val, ctx.currentTime, time);
+}
+
+// ============================================================================
+// 3. PARAMETER CONTROL & DSP UPDATES
+// ============================================================================
+function read(id) {
+  return Number(document.getElementById(id).value);
+}
+
+function applySettings() {
+  if (!initialized) return;
+
+  const bassHarmonicsOn = document.getElementById("bassHarmonicsToggle").checked;
+  const bassTurboOn = document.getElementById("bassTurboToggle").checked;
+
+  const subDriveVal = read("subDrive") / 100;
+  const bassCutoffVal = read("bassCutoff");
+  const bassGainVal = read("bassBoostGain") + (bassTurboOn ? 12 : 0);
+  const subResonanceVal = read("subResonance");
+
+  setParam(nodes.subLowpass.frequency, bassCutoffVal);
+  nodes.subDrive.curve = makeDriveCurve(bassHarmonicsOn ? subDriveVal * 1.5 : 0);
+  setParam(nodes.subGain.gain, bassHarmonicsOn ? 1.2 : 0);
+
+  setParam(nodes.sub.gain, bassGainVal + read("sub"));
+  nodes.sub.Q.value = subResonanceVal;
+  setParam(nodes.bass.gain, read("bass"));
+  setParam(nodes.punch.gain, read("punch"));
+  setParam(nodes.mid.gain, read("mid"));
+  setParam(nodes.treble.gain, read("treble"));
+  setParam(nodes.impact.gain, read("impact"));
+  setParam(nodes.presence.gain, read("presence"));
+  setParam(nodes.air.gain, read("air"));
+
+  // 10-Band EQ
+  frequencies.forEach((_, i) => {
+    const val = read("eq" + i);
+    setParam(eqNodes[i].gain, val);
+    document.getElementById("eqLabel" + i).textContent = (val > 0 ? "+" : "") + Number(val).toFixed(1) + " dB";
+  });
+
+  // DJ Dual Filter (-100 = LPF, 0 = OFF, +100 = HPF)
+  const djVal = read("djFilter");
+  if (djVal < 0) {
+    const lpfCutoff = 20 + Math.pow((100 + djVal) / 100, 3) * 19980;
+    setParam(nodes.djFilterLP.frequency, lpfCutoff);
+    setParam(nodes.djFilterHP.frequency, 20);
+    document.getElementById("djFilterOut").textContent = "LPF " + Math.round(lpfCutoff) + "Hz";
+  } else if (djVal > 0) {
+    const hpfCutoff = 20 + Math.pow(djVal / 100, 3) * 9980;
+    setParam(nodes.djFilterLP.frequency, 20000);
+    setParam(nodes.djFilterHP.frequency, hpfCutoff);
+    document.getElementById("djFilterOut").textContent = "HPF " + Math.round(hpfCutoff) + "Hz";
+  } else {
+    setParam(nodes.djFilterLP.frequency, 20000);
+    setParam(nodes.djFilterHP.frequency, 20);
+    document.getElementById("djFilterOut").textContent = "BYPASS";
+  }
+
+  // FX
+  setParam(nodes.delayWet.gain, read("echo") / 100);
+  setParam(nodes.delay.delayTime, read("delayTime") / 1000);
+  setParam(nodes.reverbWet.gain, read("reverb") / 100);
+
+  const driveVal = read("drive") / 100;
+  nodes.drive.curve = makeDriveCurve(driveVal * 2);
+
+  const flangerVal = read("flanger") / 100;
+  setParam(nodes.flangerWet.gain, flangerVal);
+
+  setParam(nodes.pan.pan, read("pan") / 100);
+
+  const compVal = read("compression") / 100;
+  setParam(nodes.compressor.threshold, -10 - compVal * 24);
+  setParam(nodes.compressor.ratio, 2 + compVal * 8);
+
+  setParam(nodes.masterGain.gain, read("volume") / 100);
+
+  updateOutputLabels();
+}
+
+function updateOutputLabels() {
+  document.getElementById("subDriveOut").textContent = read("subDrive") + "%";
+  document.getElementById("bassCutoffOut").textContent = read("bassCutoff") + " Hz";
+  document.getElementById("bassBoostGainOut").textContent = (read("bassBoostGain") > 0 ? "+" : "") + read("bassBoostGain") + " dB";
+  document.getElementById("subResonanceOut").textContent = read("subResonance");
+
+  document.getElementById("subOut").textContent = read("sub") + " dB";
+  document.getElementById("bassOut").textContent = read("bass") + " dB";
+  document.getElementById("punchOut").textContent = read("punch") + " dB";
+  document.getElementById("midOut").textContent = read("mid") + " dB";
+  document.getElementById("trebleOut").textContent = read("treble") + " dB";
+  document.getElementById("impactOut").textContent = read("impact") + " dB";
+  document.getElementById("presenceOut").textContent = read("presence") + " dB";
+  document.getElementById("airOut").textContent = read("air") + " dB";
+
+  document.getElementById("echoOut").textContent = read("echo") + "%";
+  document.getElementById("delayTimeOut").textContent = read("delayTime") + " ms";
+  document.getElementById("reverbOut").textContent = read("reverb") + "%";
+  document.getElementById("driveOut").textContent = read("drive") + "%";
+  document.getElementById("flangerOut").textContent = read("flanger") > 0 ? read("flanger") + "%" : "OFF";
+
+  const panVal = read("pan");
+  document.getElementById("panOut").textContent = panVal === 0 ? "CENTER" : panVal < 0 ? "L " + Math.abs(panVal) + "%" : "R " + panVal + "%";
+
+  document.getElementById("volumeOut").textContent = read("volume") + "%";
+  document.getElementById("compressionOut").textContent = read("compression") + "%";
+}
+
+// Attach Event Listeners to Sliders
+const sliderIDs = [
+  "subDrive", "bassCutoff", "bassBoostGain", "subResonance",
+  "sub", "bass", "punch", "mid", "treble", "impact", "presence", "air",
+  "djFilter", "echo", "delayTime", "reverb", "drive", "flanger", "pan",
+  "volume", "compression",
+  ...frequencies.map((_, i) => "eq" + i)
+];
+
+sliderIDs.forEach(id => {
+  const el = document.getElementById(id);
+  if (el) {
+    el.addEventListener("input", () => {
+      if (initialized) applySettings();
+      else updateOutputLabels();
+    });
+  }
+});
+
+["bassHarmonicsToggle", "bassTurboToggle"].forEach(id => {
+  document.getElementById(id).addEventListener("change", applySettings);
+});
+
+// ============================================================================
+// 4. NORMAL MODE (BYPASS ENGINE & COMPLETE UI LOCK)
+// ============================================================================
+const bypassToggle = document.getElementById("bypassToggle");
+const bypassLabel = document.getElementById("bypassLabel");
+const editableControlsContainer = document.getElementById("editableControlsContainer");
+
+bypassToggle.addEventListener("change", () => {
+  const isBypassed = bypassToggle.checked;
+
+  if (isBypassed) {
+    // 1. Label and Status Badges
+    bypassLabel.textContent = "NORMAL MODE (BYPASS)";
+    bypassLabel.className = "text-xs font-bold font-orbitron text-emerald-400 animate-pulse";
+    audioStateBadge.textContent = "ORIGINAL UNCOLORED SOUND";
+    audioStateBadge.className = "hidden sm:inline-block px-3 py-1 rounded-full text-xs font-mono border border-emerald-500/50 text-emerald-300 bg-emerald-950/50";
+
+    // 2. Audio Engine Bypass Routing
+    if (initialized) {
+      try {
+        source.disconnect();
+        // Dry original sound to speakers; a separate silent tap keeps the tracker alive.
+        source.connect(ctx.destination);
+        source.connect(nodes.analyser);
+      } catch (e) { console.error(e); }
+    }
+
+    // 3. Complete UI Lockdown (Disable all inputs, sliders, buttons)
+    editableControlsContainer.classList.add("locked-ui");
+    toggleControlsLock(true);
+
+  } else {
+    // Restore Live DJ DSP Processing
+    bypassLabel.textContent = "NORMAL MODE (OFF)";
+    bypassLabel.className = "text-xs font-bold font-orbitron text-cyan-300";
+    audioStateBadge.textContent = "DSP ENGINE ACTIVE";
+    audioStateBadge.className = "hidden sm:inline-block px-3 py-1 rounded-full text-xs font-mono border border-cyan-500/30 text-cyan-300 bg-cyan-950/30";
+
+    if (initialized) {
+      try {
+        source.disconnect();
+        source.connect(nodes.input);
+        applySettings();
+      } catch (e) { console.error(e); }
+    }
+
+    // Unlock UI
+    editableControlsContainer.classList.remove("locked-ui");
+    toggleControlsLock(false);
+  }
+});
+
+function toggleControlsLock(locked) {
+  // Lock all inputs inside editable area
+  const inputs = editableControlsContainer.querySelectorAll("input, button");
+  inputs.forEach(el => {
+    el.disabled = locked;
+  });
+}
+
+// ============================================================================
+// 5. AUDIO PLAYBACK SOURCE HANDLER
+// ============================================================================
+async function playAudioSource(url, isRemote = false) {
+  try {
+    if (isRemote) audio.crossOrigin = "anonymous";
+    else audio.removeAttribute("crossorigin");
+
+    initializeEngine();
+    if (!ctx) throw new Error("Audio engine could not initialize.");
+    if (bypassToggle.checked) {
+      source.disconnect();
+      source.connect(ctx.destination);
+      source.connect(nodes.analyser);
+    }
+    if (nodes.outputGate) setParam(nodes.outputGate.gain, 1);
+    if (ctx.state !== "running") await ctx.resume();
+
+    audio.pause();
+    audio.src = url;
+    audio.load();
+    await audio.play();
+
+    audioStatus.textContent = "PLAYING: " + (isRemote ? url : "Local file");
+    engineStatus.textContent = "ENGINE PLAYING";
+  } catch (err) {
+    console.error(err);
+    audioStatus.textContent = "PLAYBACK ERROR: " + err.message;
+    engineStatus.textContent = "ENGINE ERROR";
+  }
+}
+
+document.getElementById("fileInput").addEventListener("change", e => {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  if (objectURL) URL.revokeObjectURL(objectURL);
+  objectURL = URL.createObjectURL(file);
+
+  playAudioSource(objectURL, false);
+  audioStatus.textContent = "FILE LOADED: " + file.name;
+});
+
+document.getElementById("loadUrl").addEventListener("click", () => {
+  const url = document.getElementById("audioUrl").value.trim();
+  if (!url) return alert("Please enter a valid direct audio URL.");
+  playAudioSource(url, true);
+});
+
+audio.addEventListener("play", () => { if (initialized) engineStatus.textContent = "ENGINE PLAYING"; });
+audio.addEventListener("pause", () => { if (initialized) engineStatus.textContent = "ENGINE PAUSED"; });
+audio.addEventListener("ended", () => { if (initialized) engineStatus.textContent = "ENGINE READY"; });
+audio.addEventListener("error", () => {
+  const mediaError = audio.error;
+  audioStatus.textContent = mediaError
+    ? "AUDIO ERROR: " + (mediaError.message || "Unsupported or unavailable audio source.")
+    : "AUDIO SOURCE ERROR";
+});
+
+// ============================================================================
+// 6. GENRE & DEVICE SOUND PRESET PROFILES
+// ============================================================================
+const profiles = {
+  // GENRE PRESETS
+  clubBass: { sub: 5, bass: 4, punch: 3, mid: -1, treble: 2, boost: 12, harmonics: true, turbo: true, cutoff: 90 },
+  dubstep: { sub: 12, bass: 7, punch: 4, mid: 0, treble: 3, boost: 16, harmonics: true, turbo: true, cutoff: 100 },
+  hiphop: { sub: 8, bass: 5, punch: 2, mid: 1, treble: 2, boost: 10, harmonics: true, turbo: false, cutoff: 80 },
+  
+  // DEVICE TARGET PRESETS
+  mobile: { sub: 4, bass: 3, punch: 2, mid: 1, treble: 3, boost: 8, harmonics: true, turbo: false, cutoff: 110 },
+  laptop: { sub: 6, bass: 4, punch: 2, mid: 0, treble: 2, boost: 10, harmonics: true, turbo: false, cutoff: 100 },
+  tv: { sub: 4, bass: 3, punch: 2, mid: 2, treble: 1, boost: 6, harmonics: true, turbo: false, cutoff: 80 },
+  speaker: { sub: 2, bass: 4, punch: 3, mid: 0, treble: 1, boost: 4, harmonics: true, turbo: false, cutoff: 75 },
+  car: { sub: 8, bass: 6, punch: 4, mid: -1, treble: 2, boost: 12, harmonics: true, turbo: true, cutoff: 85 },
+  club: { sub: 10, bass: 8, punch: 5, mid: 0, treble: 3, boost: 14, harmonics: true, turbo: true, cutoff: 90 },
+  cinema: { sub: 10, bass: 5, punch: 3, mid: 2, treble: 1, boost: 12, harmonics: true, turbo: false, cutoff: 70 }
+};
+
+document.querySelectorAll(".profile-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    if (bypassToggle.checked) return; // Prevent edits when locked
+
+    const profKey = btn.dataset.profile;
+    const p = profiles[profKey];
+    if (!p) return;
+
+    document.querySelectorAll(".profile-btn").forEach(b => {
+      b.classList.remove("bg-cyan-950", "border-cyan-400", "shadow-[0_0_10px_rgba(0,255,255,0.2)]");
+      b.classList.add("bg-black/60", "border-cyan-900/50");
+    });
+    btn.classList.remove("bg-black/60", "border-cyan-900/50");
+    btn.classList.add("bg-cyan-950", "border-cyan-400", "shadow-[0_0_10px_rgba(0,255,255,0.2)]");
+
+    document.getElementById("sub").value = p.sub;
+    document.getElementById("bass").value = p.bass;
+    document.getElementById("punch").value = p.punch;
+    document.getElementById("mid").value = p.mid;
+    document.getElementById("treble").value = p.treble;
+    document.getElementById("bassBoostGain").value = p.boost;
+    document.getElementById("bassHarmonicsToggle").checked = p.harmonics;
+    document.getElementById("bassTurboToggle").checked = p.turbo;
+    document.getElementById("bassCutoff").value = p.cutoff;
+
+    applySettings();
+  });
+});
+
+document.getElementById("flatEq").onclick = () => {
+  frequencies.forEach((_, i) => document.getElementById("eq" + i).value = 0);
+  applySettings();
+};
+document.getElementById("bassBoostEq").onclick = () => {
+  document.getElementById("eq0").value = 12;
+  document.getElementById("eq1").value = 10;
+  document.getElementById("eq2").value = 8;
+  document.getElementById("eq3").value = 4;
+  applySettings();
+};
+document.getElementById("resetEq").onclick = () => {
+  frequencies.forEach((_, i) => document.getElementById("eq" + i).value = 0);
+  applySettings();
+};
+
+document.getElementById("savePreset").onclick = () => {
+  const data = {};
+  sliderIDs.forEach(id => data[id] = document.getElementById(id).value);
+  data.harmonics = document.getElementById("bassHarmonicsToggle").checked;
+  data.turbo = document.getElementById("bassTurboToggle").checked;
+  localStorage.setItem("mediaX_dj_preset", JSON.stringify(data));
+  alert("DSP Sound Studio Preset Saved Successfully!");
+};
+
+document.getElementById("loadPreset").onclick = () => {
+  const saved = localStorage.getItem("mediaX_dj_preset");
+  if (!saved) return alert("No saved preset found.");
+  const data = JSON.parse(saved);
+  sliderIDs.forEach(id => { if (data[id] !== undefined) document.getElementById(id).value = data[id]; });
+  if (data.harmonics !== undefined) document.getElementById("bassHarmonicsToggle").checked = data.harmonics;
+  if (data.turbo !== undefined) document.getElementById("bassTurboToggle").checked = data.turbo;
+  applySettings();
+  alert("Saved Preset Restored!");
+};
+
+document.getElementById("resetAll").onclick = () => {
+  sliderIDs.forEach(id => {
+    const el = document.getElementById(id);
+    if (id === "volume") el.value = 80;
+    else if (id === "bassCutoff") el.value = 80;
+    else if (id === "subResonance") el.value = 2.5;
+    else if (id === "subDrive") el.value = 40;
+    else if (id === "bassBoostGain") el.value = 6;
+    else el.value = 0;
+  });
+  document.getElementById("bassHarmonicsToggle").checked = true;
+  document.getElementById("bassTurboToggle").checked = false;
+  applySettings();
+};
+
+// ============================================================================
+// YOUTUBE TAB AUDIO CAPTURE — real input routed through the DSP graph for post-DSP metering
+// ============================================================================
+let youtubeCaptureStream = null;
+let youtubeCaptureSource = null;
+const youtubeCaptureStatus = document.getElementById("youtubeCaptureStatus");
+const connectYoutubeAudioButton = document.getElementById("connectYoutubeAudio");
+const stopYoutubeAudioButton = document.getElementById("stopYoutubeAudio");
+
+async function connectYoutubeAudio() {
+  if (!navigator.mediaDevices?.getDisplayMedia) {
+    youtubeCaptureStatus.textContent = "TAB AUDIO CAPTURE NOT SUPPORTED";
+    audioStatus.textContent = "Use a browser that supports tab-audio capture on HTTPS or localhost.";
+    return;
+  }
+  try {
+    initializeEngine();
+    if (!initialized || !ctx) throw new Error("DSP engine could not initialize.");
+    if (ctx.state !== "running") await ctx.resume();
+
+    // Browser permission is required to capture the actual YouTube tab audio.
+    youtubeCaptureStream = await navigator.mediaDevices.getDisplayMedia({
+      video: { displaySurface: "browser" },
+      audio: true,
+      preferCurrentTab: true,
+      selfBrowserSurface: "include",
+      systemAudio: "include"
+    });
+
+    const audioTracks = youtubeCaptureStream.getAudioTracks();
+    if (!audioTracks.length) {
+      youtubeCaptureStream.getTracks().forEach(track => track.stop());
+      youtubeCaptureStream = null;
+      youtubeCaptureStatus.textContent = "TAB AUDIO NOT SHARED";
+      audioStatus.textContent = "Choose this browser tab and enable Share tab audio.";
+      return;
+    }
+
+    // Remove any previous captured input before attaching the new real stream.
+    try { youtubeCaptureSource?.disconnect(); } catch (_) {}
+    youtubeCaptureSource = ctx.createMediaStreamSource(youtubeCaptureStream);
+    youtubeCaptureSource.connect(nodes.input);
+
+    // Keep the captured signal out of the speakers here: YouTube already plays
+    // directly in its iframe. The post-DSP analyser still receives the processed signal.
+    setParam(nodes.outputGate.gain, 0);
+    youtubeCaptureStatus.textContent = "YOUTUBE AUDIO CONNECTED";
+    audioStatus.textContent = "Real YouTube audio routed through DSP for live tracking";
+    connectYoutubeAudioButton.disabled = true;
+    stopYoutubeAudioButton.disabled = false;
+
+    youtubeCaptureStream.getTracks().forEach(track => {
+      track.addEventListener("ended", stopYoutubeAudio, { once: true });
+    });
+  } catch (err) {
+    console.error("YouTube tab audio capture:", err);
+    youtubeCaptureStatus.textContent = "NOT CONNECTED";
+    audioStatus.textContent = err.name === "NotAllowedError"
+      ? "Tab-audio permission was cancelled. Connect again and allow tab audio."
+      : "Capture error: " + err.message;
+  }
+}
+
+function stopYoutubeAudio() {
+  try { youtubeCaptureSource?.disconnect(); } catch (_) {}
+  if (youtubeCaptureStream) youtubeCaptureStream.getTracks().forEach(track => track.stop());
+  youtubeCaptureStream = null;
+  youtubeCaptureSource = null;
+  if (initialized && nodes.outputGate) setParam(nodes.outputGate.gain, 1);
+  if (youtubeCaptureStatus) youtubeCaptureStatus.textContent = "NOT CONNECTED";
+  if (audioStatus) audioStatus.textContent = "YouTube audio detector stopped";
+  if (connectYoutubeAudioButton) connectYoutubeAudioButton.disabled = false;
+  if (stopYoutubeAudioButton) stopYoutubeAudioButton.disabled = true;
+}
+
+connectYoutubeAudioButton?.addEventListener("click", connectYoutubeAudio);
+stopYoutubeAudioButton?.addEventListener("click", stopYoutubeAudio);
+
+// ============================================================================
+// 7. DUAL CANVAS VISUALIZERS (MAIN SPECTRUM & 5-LINE LIVE TRACKER)
+// ============================================================================
+function initVisualizer() {
+  const canvas = document.getElementById("visualizer");
+  if (!canvas) return;
+  const ctx2d = canvas.getContext("2d");
+  const freqData = new Uint8Array(nodes.analyser ? nodes.analyser.frequencyBinCount : 128);
+
+  function render() {
+    requestAnimationFrame(render);
+
+    const w = canvas.width = canvas.clientWidth * devicePixelRatio;
+    const h = canvas.height = canvas.clientHeight * devicePixelRatio;
+
+    ctx2d.clearRect(0, 0, w, h);
+
+    if (initialized && nodes.analyser) {
+      nodes.analyser.getByteFrequencyData(freqData);
+    } else {
+      freqData.fill(0);
+    }
+
+    const barCount = 64;
+    const gap = 3 * devicePixelRatio;
+    const barWidth = (w - gap * (barCount - 1)) / barCount;
+    let maxPeak = 0;
+
+    for (let i = 0; i < barCount; i++) {
+      const val = freqData[i * 2] || 0;
+      if (val > maxPeak) maxPeak = val;
+
+      const barHeight = (val / 255) * h * 0.9;
+      const x = i * (barWidth + gap);
+
+      const grad = ctx2d.createLinearGradient(0, h - barHeight, 0, h);
+      grad.addColorStop(0, "#ffffff");
+      grad.addColorStop(0.2, "#00ffff");
+      grad.addColorStop(1, "#004455");
+
+      ctx2d.fillStyle = grad;
+      ctx2d.fillRect(x, h - barHeight, barWidth, barHeight);
+    }
+
+    document.getElementById("peakStatus").textContent = "PEAK: " + Math.round((maxPeak / 255) * 100) + "%";
+  }
+
+  render();
+}
+
+// 5-LINE LIVE SOUND TRACKER (ALWAYS VISIBLE ENDLESS RENDER LOOP)
+function init5LineAudioTracker() {
+  const canvas = document.getElementById("trackerCanvas");
+  if (!canvas || canvas.dataset.started === "1") return;
+  canvas.dataset.started = "1";
+  const g = canvas.getContext("2d");
+  const fft = new Float32Array(1024);
+  const smooth = [0, 0, 0, 0, 0];
+  const peaks = [0, 0, 0, 0, 0];
+  const bands = [
+    { name: "SUB BASS", range: "20–60 Hz", low: 20, high: 60, color: [73, 220, 255] },
+    { name: "LOW BASS", range: "60–250 Hz", low: 60, high: 250, color: [61, 224, 202] },
+    { name: "MID RANGE", range: "250 Hz–2 kHz", low: 250, high: 2000, color: [119, 232, 174] },
+    { name: "TREBLE", range: "2–8 kHz", low: 2000, high: 8000, color: [180, 220, 255] },
+    { name: "OVERALL PEAK", range: "20 Hz–20 kHz", low: 20, high: 20000, color: [200, 190, 255] }
+  ];
+
+  function render() {
+    requestAnimationFrame(render);
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const w = Math.max(1, Math.floor(canvas.clientWidth * dpr));
+    const h = Math.max(1, Math.floor(canvas.clientHeight * dpr));
+    if (canvas.width !== w || canvas.height !== h) { canvas.width = w; canvas.height = h; }
+    g.clearRect(0, 0, w, h);
+
+    const liveCapture = youtubeCaptureStream?.getAudioTracks().some(track => track.readyState === "live");
+    const selectedAnalyser = bypassToggle.checked ? nodes.analyser : nodes.postTrackerAnalyser;
+    if (liveCapture && selectedAnalyser) {
+      // Read real captured audio in dB. This avoids treating every non-zero FFT
+      // bin as a near-full-scale value (the old byte/255 mapping saturated).
+      selectedAnalyser.getFloatFrequencyData(fft);
+    } else {
+      fft.fill(0);
+    }
+
+    const padX = 26 * dpr, padTop = 18 * dpr, padBottom = 64 * dpr;
+    const usableW = w - padX * 2, usableH = h - padTop - padBottom;
+    const laneW = usableW / 5;
+    const meterW = Math.min(44 * dpr, laneW * .30);
+    const meterH = usableH;
+    const top = padTop, bottom = top + meterH;
+    const sampleRate = ctx ? ctx.sampleRate : 44100;
+    const binHz = sampleRate / 2048;
+
+    // Quiet horizontal calibration grid across all five lanes.
+    for (let tick = 0; tick <= 12; tick++) {
+      const y = bottom - meterH * tick / 12;
+      g.beginPath(); g.moveTo(padX, y); g.lineTo(w - padX, y);
+      g.strokeStyle = tick === 6 ? "rgba(140,190,200,.19)" : "rgba(110,160,170,.065)";
+      g.lineWidth = dpr; g.stroke();
+    }
+
+    bands.forEach((band, i) => {
+      const xCenter = padX + laneW * (i + .5);
+      const x = xCenter - meterW / 2;
+      let total = 0, count = 0, max = 0;
+      const first = Math.max(1, Math.floor(band.low / binHz));
+      const last = Math.min(fft.length - 1, Math.ceil(band.high / binHz));
+      for (let b = first; b <= last; b++) {
+        const db = Number.isFinite(fft[b]) ? fft[b] : -120;
+        total += db;
+        count++;
+        if (db > max) max = db;
+      }
+      const bandDb = i === 4 ? max : (count ? total / count : -120);
+      // Calibrated audio meter: normal musical peaks tend toward 100–150%.
+      // Only unusually hot signal peaks use the extra 150–200% headroom.
+      // Silence / muted captured audio maps to exactly zero.
+      const normalRange = Math.max(0, Math.min(1, (bandDb + 90) / 60)); // -90..-30 dB
+      const hotHeadroom = Math.max(0, Math.min(1, (bandDb + 30) / 20)); // -30..-10 dB
+      let level = bandDb <= -90 ? 0 : (normalRange * 1.5 + hotHeadroom * 0.5);
+      level = Math.min(2, level);
+      smooth[i] += (level - smooth[i]) * (level > smooth[i] ? .34 : .16);
+      if (!liveCapture) smooth[i] = 0;
+      peaks[i] = Math.max(smooth[i], peaks[i] - .0025);
+
+      // Thin outlined track, with many fine ticks instead of thick LED blocks.
+      g.fillStyle = "rgba(4,14,18,.55)";
+      g.fillRect(x, top, meterW, meterH);
+      g.strokeStyle = "rgba(85,185,195,.32)";
+      g.lineWidth = 1 * dpr;
+      g.strokeRect(x, top, meterW, meterH);
+
+      const ticks = 48;
+      const gap = 2.1 * dpr;
+      const lineH = Math.max(1 * dpr, (meterH - gap * (ticks - 1)) / ticks);
+      const litCount = Math.round(Math.min(1, smooth[i] / 2) * ticks);
+      for (let t = 0; t < ticks; t++) {
+        const y = bottom - lineH - t * (lineH + gap);
+        const active = t < litCount;
+        const ratio = t / (ticks - 1);
+        let color = band.color;
+        if (ratio > .82) color = [255, 190, 92];
+        if (ratio > .94) color = [255, 112, 112];
+        g.fillStyle = active
+          ? `rgba(${color[0]},${color[1]},${color[2]},${Math.min(.94, .52 + .21 * smooth[i])})`
+          : "rgba(74,125,135,.12)";
+        g.fillRect(x + 3 * dpr, y, meterW - 6 * dpr, lineH);
+      }
+
+      // Hairline peak marker; no shadow or external bloom.
+      const peakY = bottom - Math.min(1, peaks[i] / 2) * meterH;
+      g.beginPath(); g.moveTo(x - 5 * dpr, peakY); g.lineTo(x + meterW + 5 * dpr, peakY);
+      g.strokeStyle = "rgba(235,250,255,.72)";
+      g.lineWidth = 1 * dpr; g.stroke();
+
+      // Value and labels.
+      g.textAlign = "center";
+      g.font = `700 ${12 * dpr}px Orbitron, sans-serif`;
+      g.fillStyle = "#d8faff";
+      g.fillText(`${Math.round(smooth[i] * 100)}%`, xCenter, bottom + 19 * dpr);
+      g.font = `700 ${Math.max(9, 11) * dpr}px Orbitron, sans-serif`;
+      g.fillStyle = "#bcebf0";
+      g.fillText(band.name, xCenter, bottom + 39 * dpr);
+      g.font = `${10 * dpr}px Rajdhani, sans-serif`;
+      g.fillStyle = "#789ba3";
+      g.fillText(band.range, xCenter, bottom + 53 * dpr);
+    });
+  }
+  render();
+}
+
+// Start Render Loops Immediately on Page Load
+window.addEventListener("DOMContentLoaded", () => { init5LineAudioTracker(); });
+
+// Initial Output Setup
+updateOutputLabels();
+</script>
+</body>
+</html>

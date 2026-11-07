@@ -392,6 +392,18 @@
       pointer-events: none;
     }
 
+    .dj-remix-btn{display:flex;align-items:center;gap:7px;padding:10px 11px;border-radius:13px;border:1px solid rgba(112,246,231,.35);background:linear-gradient(135deg,rgba(28,80,91,.7),rgba(32,24,65,.8));color:var(--cyan);font-size:9px;font-weight:800;letter-spacing:.5px;white-space:nowrap}
+    .dj-remix-btn[aria-expanded="true"]{background:rgba(112,246,231,.16);box-shadow:0 0 18px rgba(112,246,231,.13)}
+    .dj-remix-panel{display:none;width:min(100%,435px);margin:14px auto 0;padding:17px;border:1px solid rgba(112,246,231,.2);border-radius:22px;background:rgba(9,14,29,.94);box-shadow:0 18px 55px rgba(0,0,0,.35)}
+    .dj-remix-panel.open{display:block;animation:djPanelIn .2s ease-out}
+    @keyframes djPanelIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+    .dj-meter{height:90px;display:flex;align-items:end;justify-content:center;gap:7px;padding:12px;border:1px solid rgba(112,246,231,.14);border-radius:14px;background:#050914}
+    .dj-meter i{display:block;width:9%;height:3px;border-radius:8px;background:linear-gradient(0deg,#70f6e7,#a18aff);opacity:.8;transition:height .18s ease}
+    .dj-meter-note{font-size:10px;color:var(--muted);line-height:1.5;margin-top:10px}
+    .dj-chip-row{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}
+    .dj-chip{font-size:9px;color:#a9b5ce;border:1px solid rgba(255,255,255,.1);background:#11182a;border-radius:999px;padding:6px 9px}
+    @media(max-width:380px){.dj-remix-btn{padding:9px 8px;font-size:8px;gap:5px}.dj-remix-btn span{display:none}}
+
     @media (max-width: 380px) {
       .page { padding: 12px; }
       .player-card { padding: 19px; border-radius: 25px; }
@@ -448,6 +460,9 @@
                 onchange="changePlaylist(this.value)" aria-label="Select playlist">
           <option value="">Loading playlists...</option>
         </select>
+        <button class="dj-remix-btn" id="djRemixToggle" type="button" aria-expanded="false" onclick="toggleDjRemix()">
+          <i class="fa-solid fa-sliders"></i><span>DJ REMIX</span>
+        </button>
       </header>
 
       <div class="artwork-area">
@@ -516,6 +531,18 @@
       <p class="status" id="status" role="status">Loading music library...</p>
     </section>
   </main>
+
+  <section class="dj-remix-panel" id="djRemixPanel" aria-hidden="true">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px">
+      <div><div style="font-size:12px;font-weight:800;letter-spacing:1.2px;color:var(--cyan)">MEDIA X / DJ REMIX</div><div style="font-size:9px;color:var(--muted);margin-top:3px">PLAYER LEVEL MONITOR</div></div>
+      <span id="djPlayerVolume" style="font:700 11px monospace;color:var(--cyan)">VOL 0%</span>
+    </div>
+    <div class="dj-meter" id="djVolumeMeter" aria-label="YouTube player volume level">
+      <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+    </div>
+    <div class="dj-chip-row"><span class="dj-chip">BASS</span><span class="dj-chip">10-BAND EQ</span><span class="dj-chip">FILTER</span><span class="dj-chip">REVERB</span><span class="dj-chip">DELAY</span></div>
+    <p class="dj-meter-note" id="djRemixNotice">This player uses YouTube's embedded audio. The monitor follows the player's volume and playback state; browser security does not expose the decoded YouTube sound to this page's DJ effects. Your existing playback remains unchanged.</p>
+  </section>
 
   <div id="youtube-player"></div>
 
@@ -1039,6 +1066,38 @@
 
     function goHome() {
       window.location.href = "index.html";
+    }
+
+    // DJ Remix panel: observes the existing YouTube player's own volume setting.
+    // It deliberately does not intercept or replace the stable mobile playback path.
+    let djPanelTimer = null;
+    function toggleDjRemix() {
+      const panel = $("djRemixPanel");
+      const button = $("djRemixToggle");
+      const open = !panel.classList.contains("open");
+      panel.classList.toggle("open", open);
+      panel.setAttribute("aria-hidden", String(!open));
+      button.setAttribute("aria-expanded", String(open));
+      if (open) {
+        updateDjPlayerMeter();
+        if (djPanelTimer) clearInterval(djPanelTimer);
+        djPanelTimer = setInterval(updateDjPlayerMeter, 250);
+      } else if (djPanelTimer) {
+        clearInterval(djPanelTimer); djPanelTimer = null;
+      }
+    }
+    function updateDjPlayerMeter() {
+      let volume = 0;
+      try { if (playerReady && player && typeof player.getVolume === "function") volume = player.isMuted?.() ? 0 : player.getVolume(); } catch (_) {}
+      volume = Math.max(0, Math.min(100, Number(volume) || 0));
+      $("djPlayerVolume").textContent = `VOL ${Math.round(volume)}%`;
+      const bars = $("djVolumeMeter").querySelectorAll("i");
+      bars.forEach((bar, index) => {
+        const threshold = (index + 1) * 10;
+        bar.style.height = volume >= threshold ? `${12 + (index * 5)}px` : "3px";
+        bar.style.opacity = volume >= threshold ? ".95" : ".28";
+      });
+      if (!isPlaying || volume === 0) bars.forEach(bar => { bar.style.height = "3px"; });
     }
 
     // Load the library.
